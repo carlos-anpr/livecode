@@ -12,6 +12,7 @@
 /build
 /dist
 /.vite
+/.bolt
 
 # Entorno
 .env

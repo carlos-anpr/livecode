@@ -11,25 +11,27 @@ import { CommunityDesignsModal } from './components/CommunityDesignsModal'
 import { EditorFile } from "./types";
 import { SavedDesign } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
+import { manual } from "./data/manual"
 import "./styles/split-pane.css";
 
 // In a real app, this would be fetched from Supabase
 const mockSavedDesigns: SavedDesign[] = []
 
-const emptyFiles: EditorFile[] = [
-  { id: "1", name: "index.html", language: "html", content: "" },
-  { id: "2", name: "styles.css", language: "css", content: "" },
-  { id: "3", name: "script.js", language: "javascript", content: "" }
+const manualFiles: EditorFile[] = [
+  { id: "1", name: "index.html", language: "html", content: manual[0].content },
+  { id: "2", name: "styles.css", language: "css", content: manual[1].content },
+  { id: "3", name: "script.js", language: "javascript", content: manual[2].content }
 ];
 
 export default function App() {
-  const [files, setFiles] = useState<EditorFile[]>(emptyFiles);
+  const [files, setFiles] = useState<EditorFile[]>(manualFiles);
   const [activeFileId, setActiveFileId] = useState(files[0].id);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [savedDesigns, setSavedDesigns] =
     useState<SavedDesign[]>(mockSavedDesigns);
   const [isSaving, setIsSaving] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
     initialFiles.map((design, index) => ({
@@ -49,7 +51,12 @@ export default function App() {
 
   const activeFile = files.find((f) => f.id === activeFileId)!;
 
-  // Función para manejar selección de diseño
+
+  const handleTogglePreview = () => {
+    setIsPreviewMode(!isPreviewMode);
+  };
+
+
   const handleSelectCommunityDesign = (design: SavedDesign) => {
     handleSelectDesign(design);
     setIsCommunityOpen(false);
@@ -69,7 +76,6 @@ export default function App() {
 
 
   const captureScreenshot = async () => {
-    // Crear un contenedor temporal para renderizar la vista previa
     const container = document.createElement("div");
     container.style.position = "absolute";
     container.style.left = "-9999px"; // Ocultar fuera de la pantalla
@@ -209,11 +215,12 @@ export default function App() {
         onSave={() => setIsSaveModalOpen(true)}
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
         onToggleCommunity={() => setIsCommunityOpen(true)}
+        onTogglePreview={handleTogglePreview}
         isHistoryOpen={isHistoryOpen}
+        isPreviewMode={isPreviewMode}
         onClear={handleClearDesign}
         isSaving={isSaving}
       />
-
 
       <CommunityDesignsModal
         isOpen={isCommunityOpen}
@@ -229,11 +236,11 @@ export default function App() {
       />
       <Split
         className="flex-1 flex"
-        sizes={[40, 60]}
-        minSize={[300, 300]}
-        maxSize={[960, Infinity]}
+        sizes={isPreviewMode ? [0, 100] : [35, 65]}
+        minSize={isPreviewMode ? [0, 100] : [300, 300]}
+        maxSize={isPreviewMode ? [0, Infinity] : [960, Infinity]}
         expandToMin={false}
-        gutterSize={6}
+        gutterSize={isPreviewMode ? 0 : 6}
         gutterAlign="center"
         snapOffset={30}
         dragInterval={1}
@@ -241,7 +248,11 @@ export default function App() {
         cursor="col-resize"
         style={{ transition: "all 0.2s ease" }}
       >
-        <EditorPane file={activeFile} onChange={handleFileChange} />
+        <EditorPane
+          file={activeFile}
+          onChange={handleFileChange}
+
+        />
         <PreviewPane files={files} />
       </Split>
 

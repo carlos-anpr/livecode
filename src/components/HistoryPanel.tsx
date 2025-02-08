@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Star, Clock, Tag, Trash2, X } from 'lucide-react';
 import { SavedDesign } from '../types/editor';
 
@@ -63,7 +63,7 @@ export function HistoryPanel({
               className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-blue-500"
             />
           </div>
-          
+
           <div className="space-y-4">
             {designs.map((design) => (
               <div
@@ -94,9 +94,8 @@ export function HistoryPanel({
                         e.stopPropagation();
                         onToggleFavorite(design.id);
                       }}
-                      className={`p-1.5 rounded-full hover:bg-gray-700 transition-colors ${
-                        design.favorite ? 'text-yellow-400' : 'text-gray-400'
-                      }`}
+                      className={`p-1.5 rounded-full hover:bg-gray-700 transition-colors ${design.favorite ? 'text-yellow-400' : 'text-gray-400'
+                        }`}
                     >
                       <Star size={16} />
                     </button>
@@ -111,7 +110,7 @@ export function HistoryPanel({
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center space-x-4 text-sm text-gray-400">
                   <div className="flex items-center">
                     <Clock size={14} className="mr-1" />

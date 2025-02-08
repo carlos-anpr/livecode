@@ -1,10 +1,13 @@
-import { Save, History, X, Eraser, Loader2, Globe } from 'lucide-react';
+import { Save, History, X, Eraser, Loader2, Globe, Maximize2, Minimize2 } from 'lucide-react';
+import ZephyrIcon from './ZephyrIcon';
 
 interface HeaderProps {
   onSave: () => void;
   onToggleHistory: () => void;
   onToggleCommunity: () => void;
+  onTogglePreview: () => void;
   isHistoryOpen: boolean;
+  isPreviewMode: boolean;
   onClear: () => void;
   isSaving: boolean;
 }
@@ -13,23 +16,27 @@ export function Header({
   onSave,
   onToggleHistory,
   onToggleCommunity,
+  onTogglePreview,
   isHistoryOpen,
+  isPreviewMode,
   onClear,
   isSaving
 }: HeaderProps) {
   return (
     <div className="h-14 bg-gray-900 border-b border-gray-700/50 flex items-center justify-between px-4 backdrop-blur-sm">
       <div className="flex items-center space-x-2">
-        <h1 className="text-white text-xl font-semibold">Code Editor</h1>
+
+        <ZephyrIcon size={40} className="text-indigo-400" />
+        <h1 className="text-white text-xl font-semibold">Zephyr</h1>
+
       </div>
 
-      {/* Overlay de bloqueo durante el guardado */}
       {isSaving && (
         <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50" />
       )}
 
       <div className="flex items-center space-x-3 relative">
-        {/* Botón Clear */}
+
         <button
           onClick={onClear}
           disabled={isSaving}
@@ -42,7 +49,26 @@ export function Header({
           <span className="text-sm font-medium">Clear</span>
         </button>
 
-        {/* Botón Community */}
+        <button
+          onClick={onTogglePreview}
+          disabled={isSaving}
+          className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200
+          ${isPreviewMode
+              ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+              : 'bg-green-500/10 text-green-300 border border-green-500/20 hover:bg-green-500/20 hover:border-green-500/30'
+            }
+          disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {isPreviewMode ? (
+            <Minimize2 size={16} className="opacity-80" />
+          ) : (
+            <Maximize2 size={16} className="opacity-80" />
+          )}
+          <span className="text-sm font-medium">
+            {isPreviewMode ? 'Editor' : 'Preview'}
+          </span>
+        </button>
+
         <button
           onClick={onToggleCommunity}
           disabled={isSaving}
@@ -55,7 +81,6 @@ export function Header({
           <span className="text-sm font-medium">Community</span>
         </button>
 
-        {/* Botón Save con spinner */}
         <button
           onClick={onSave}
           disabled={isSaving}
@@ -74,7 +99,6 @@ export function Header({
           </span>
         </button>
 
-        {/* Botón History */}
         <button
           onClick={onToggleHistory}
           disabled={isSaving}
