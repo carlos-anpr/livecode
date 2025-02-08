@@ -130,6 +130,8 @@ export default function App() {
       const cssFile = files.find((f) => f.language === "css")?.content || "";
       const jsFile = files.find((f) => f.language === "javascript")?.content || "";
 
+      setIsSaveModalOpen(false);
+
       const screenshot = await captureScreenshot();
 
       const newDesign: SavedDesign = {
@@ -154,7 +156,7 @@ export default function App() {
         setCommunityDesigns([newDesign, ...communityDesigns]);
       }
 
-      setIsSaveModalOpen(false);
+
     } catch (error) {
       console.error("Error saving design:", error);
     } finally {
