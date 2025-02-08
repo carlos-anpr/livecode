@@ -1,0 +1,42 @@
+/* React Split Styles */
+.gutter {
+  background-color: #374151;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.gutter:hover {
+  background-color: #3b82f6;
+}
+
+.gutter::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 24px;
+  background-color: currentColor;
+  border-radius: 2px;
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+
+.gutter:hover::after {
+  opacity: 0.5;
+}
+
+.gutter.gutter-horizontal {
+  cursor: col-resize;
+}
+
+/* Smooth split pane resizing */
+.split {
+  display: flex;
+  flex-direction: row;
+}
+
+.split > * {
+  transition: flex-basis 0.1s ease;
+}
