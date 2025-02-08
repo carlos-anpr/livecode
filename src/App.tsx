@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Split from "react-split";
 import html2canvas from "html2canvas";
 import { EditorPane } from "./components/EditorPane";
@@ -27,6 +27,8 @@ const mockSavedDesigns: SavedDesign[] = initialFiles.map(
   })
 );
 
+initialFiles[0].pop()
+
 export default function App() {
   const [files, setFiles] = useState<EditorFile[]>(initialFiles[0]);
   const [activeFileId, setActiveFileId] = useState(files[0].id);
@@ -34,12 +36,22 @@ export default function App() {
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [savedDesigns, setSavedDesigns] =
     useState<SavedDesign[]>(mockSavedDesigns);
+  const [isSaving, setIsSaving] = useState(false);
 
   const activeFile = files.find((f) => f.id === activeFileId)!;
 
   const handleFileChange = (content: string) => {
     setFiles(files.map((f) => (f.id === activeFileId ? { ...f, content } : f)));
   };
+
+  const handleClearDesign = () => {
+    setFiles([
+      { id: "1", name: "index.html", language: "html", content: "" },
+      { id: "2", name: "styles.css", language: "css", content: "" },
+      { id: "3", name: "script.js", language: "javascript", content: "" }
+    ]);
+  };
+
 
   const captureScreenshot = async () => {
     // Crear un contenedor temporal para renderizar la vista previa
@@ -96,13 +108,13 @@ export default function App() {
     description: string,
     tags: string[]
   ) => {
-    const htmlFile = files.find((f) => f.language === "html")?.content || "";
-    const cssFile = files.find((f) => f.language === "css")?.content || "";
-    const jsFile =
-      files.find((f) => f.language === "javascript")?.content || "";
-
+    setIsSaving(true);
     try {
-      const screenshot = await captureScreenshot(); // Generar captura
+      const htmlFile = files.find((f) => f.language === "html")?.content || "";
+      const cssFile = files.find((f) => f.language === "css")?.content || "";
+      const jsFile = files.find((f) => f.language === "javascript")?.content || "";
+
+      const screenshot = await captureScreenshot();
 
       const newDesign: SavedDesign = {
         id: Date.now().toString(),
@@ -115,13 +127,15 @@ export default function App() {
         updated_at: new Date().toISOString(),
         favorite: false,
         tags,
-        screenshot, // Guardar captura aquí
+        screenshot,
       };
 
       setSavedDesigns([newDesign, ...savedDesigns]);
       setIsSaveModalOpen(false);
     } catch (error) {
       console.error("Error saving design:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -170,6 +184,8 @@ export default function App() {
         onSave={() => setIsSaveModalOpen(true)}
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
         isHistoryOpen={isHistoryOpen}
+        onClear={handleClearDesign}
+        isSaving={isSaving}
       />
       <FileTabs
         files={files}

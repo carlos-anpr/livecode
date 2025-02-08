@@ -1,4 +1,4 @@
-import { EditorFile } from "../types/editor";
+import { EditorFile } from '../types/editor';
 
 const contentHTML1 = `
 <!DOCTYPE html>
@@ -296,7 +296,7 @@ const contentHTML2 = `
             </div>
             
             <div class="nav-center">
-                <a href="#" class="logo">MAISON</a>
+                <a href="#hero" class="logo">MAISON</a>
             </div>
             
             <div class="nav-right">
@@ -314,7 +314,7 @@ const contentHTML2 = `
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section id="hero" class="hero">
         <div class="hero-content">
             <h1>La Nueva Colección</h1>
             <p>PRIMAVERA · VERANO 2025</p>
@@ -843,11 +843,10 @@ const JS2 = `
 			e.preventDefault();
 			const target = document.querySelector(this.getAttribute('href'));
 			if (target) {
-				const navHeight = document.querySelector('.main-nav').offsetHeight;
 				const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
 				
 				window.scrollTo({
-					top: targetPosition - navHeight,
+					top: targetPosition,
 					behavior: 'smooth'
 				});
 			}
@@ -858,54 +857,54 @@ const JS2 = `
 export const initialFiles: EditorFile[][] = [
   [
     {
-      id: "1",
-      name: "index.html",
-      language: "html",
+      id: '1',
+      name: 'index.html',
+      language: 'html',
       content: contentHTML1,
     },
     {
-      id: "2",
-      name: "styles.css",
-      language: "css",
+      id: '2',
+      name: 'styles.css',
+      language: 'css',
       content: contentCSS1,
     },
     {
-      id: "3",
-      name: "script.js",
-      language: "javascript",
+      id: '3',
+      name: 'script.js',
+      language: 'javascript',
       content: 'console.log("Hello from JavaScript!");',
     },
     {
-      id: "4",
-      name: "Registro pacientes",
-      tags: ["registro", "pacientes"],
+      id: '4',
+      name: 'Registro pacientes',
+      tags: ['registro', 'pacientes'],
       favorite: false,
     },
   ],
 
   [
     {
-      id: "1",
-      name: "index.html",
-      language: "html",
+      id: '1',
+      name: 'index.html',
+      language: 'html',
       content: contentHTML2,
     },
     {
-      id: "2",
-      name: "styles.css",
-      language: "css",
+      id: '2',
+      name: 'styles.css',
+      language: 'css',
       content: contentCSS2,
     },
     {
-      id: "3",
-      name: "script.js",
-      language: "javascript",
+      id: '3',
+      name: 'script.js',
+      language: 'javascript',
       content: JS2,
     },
     {
-      id: "4",
-      name: "Tienda de moda",
-      tags: ["tienda", "moda"],
+      id: '4',
+      name: 'Tienda de moda',
+      tags: ['tienda', 'moda'],
       favorite: true,
     },
   ],
