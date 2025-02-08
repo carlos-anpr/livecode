@@ -7,38 +7,53 @@ import { FileTabs } from "./components/FileTabs";
 import { Header } from "./components/Header";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { SaveDesignModal } from "./components/SaveDesignModal";
-import { EditorFile, SavedDesign } from "./types/editor";
+import { CommunityDesignsModal } from './components/CommunityDesignsModal'
+import { EditorFile } from "./types";
+import { SavedDesign } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
 import "./styles/split-pane.css";
 
 // In a real app, this would be fetched from Supabase
-const mockSavedDesigns: SavedDesign[] = initialFiles.map(
-  (savedDesign, index) => ({
-    id: String(index),
-    name: savedDesign[3]?.name ?? "Mock",
-    description: savedDesign[3]?.description ?? "",
-    html: savedDesign[0].content ?? "",
-    css: savedDesign[1].content ?? "",
-    javascript: savedDesign[2].content ?? "",
-    created_at: "2024-03-10T10:00:00Z",
-    updated_at: "2024-03-10T10:00:00Z",
-    favorite: savedDesign[3]?.favorite ?? false,
-    tags: savedDesign[3]?.tags ?? [],
-  })
-);
+const mockSavedDesigns: SavedDesign[] = []
 
-initialFiles[0].pop()
+const emptyFiles: EditorFile[] = [
+  { id: "1", name: "index.html", language: "html", content: "" },
+  { id: "2", name: "styles.css", language: "css", content: "" },
+  { id: "3", name: "script.js", language: "javascript", content: "" }
+];
 
 export default function App() {
-  const [files, setFiles] = useState<EditorFile[]>(initialFiles[0]);
+  const [files, setFiles] = useState<EditorFile[]>(emptyFiles);
   const [activeFileId, setActiveFileId] = useState(files[0].id);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [savedDesigns, setSavedDesigns] =
     useState<SavedDesign[]>(mockSavedDesigns);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCommunityOpen, setIsCommunityOpen] = useState(false);
+  const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
+    initialFiles.map((design, index) => ({
+      id: String(index),
+      name: design[3]?.name ?? "Untitled Design",
+      description: design[3]?.description ?? "",
+      html: design[0].content ?? "",
+      css: design[1].content ?? "",
+      javascript: design[2].content ?? "",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      favorite: design[3]?.favorite ?? false,
+      tags: design[3]?.tags ?? [],
+      screenshot: null
+    }))
+  );
 
   const activeFile = files.find((f) => f.id === activeFileId)!;
+
+  // Función para manejar selección de diseño
+  const handleSelectCommunityDesign = (design: SavedDesign) => {
+    handleSelectDesign(design);
+    setIsCommunityOpen(false);
+  };
 
   const handleFileChange = (content: string) => {
     setFiles(files.map((f) => (f.id === activeFileId ? { ...f, content } : f)));
@@ -106,7 +121,8 @@ export default function App() {
   const handleSaveDesign = async (
     name: string,
     description: string,
-    tags: string[]
+    tags: string[],
+    shareWithCommunity: boolean
   ) => {
     setIsSaving(true);
     try {
@@ -130,7 +146,14 @@ export default function App() {
         screenshot,
       };
 
+      // Guardar en el historial personal
       setSavedDesigns([newDesign, ...savedDesigns]);
+
+      // Si se marca para compartir, también guardar en la comunidad
+      if (shareWithCommunity) {
+        setCommunityDesigns([newDesign, ...communityDesigns]);
+      }
+
       setIsSaveModalOpen(false);
     } catch (error) {
       console.error("Error saving design:", error);
@@ -183,10 +206,20 @@ export default function App() {
       <Header
         onSave={() => setIsSaveModalOpen(true)}
         onToggleHistory={() => setIsHistoryOpen(!isHistoryOpen)}
+        onToggleCommunity={() => setIsCommunityOpen(true)}
         isHistoryOpen={isHistoryOpen}
         onClear={handleClearDesign}
         isSaving={isSaving}
       />
+
+
+      <CommunityDesignsModal
+        isOpen={isCommunityOpen}
+        onClose={() => setIsCommunityOpen(false)}
+        designs={communityDesigns}
+        onSelect={handleSelectCommunityDesign}
+      />
+
       <FileTabs
         files={files}
         activeFileId={activeFileId}

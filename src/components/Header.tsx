@@ -1,20 +1,35 @@
-import { Save, History, X, Eraser, Loader2 } from 'lucide-react';
+import { Save, History, X, Eraser, Loader2, Globe } from 'lucide-react';
 
 interface HeaderProps {
   onSave: () => void;
   onToggleHistory: () => void;
+  onToggleCommunity: () => void;
   isHistoryOpen: boolean;
   onClear: () => void;
   isSaving: boolean;
 }
 
-export function Header({ onSave, onToggleHistory, isHistoryOpen, onClear, isSaving }: HeaderProps) {
+export function Header({
+  onSave,
+  onToggleHistory,
+  onToggleCommunity,
+  isHistoryOpen,
+  onClear,
+  isSaving
+}: HeaderProps) {
   return (
     <div className="h-14 bg-gray-900 border-b border-gray-700/50 flex items-center justify-between px-4 backdrop-blur-sm">
       <div className="flex items-center space-x-2">
         <h1 className="text-white text-xl font-semibold">Code Editor</h1>
       </div>
-      <div className="flex items-center space-x-3">
+
+      {/* Overlay de bloqueo durante el guardado */}
+      {isSaving && (
+        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50" />
+      )}
+
+      <div className="flex items-center space-x-3 relative">
+        {/* Botón Clear */}
         <button
           onClick={onClear}
           disabled={isSaving}
@@ -26,6 +41,21 @@ export function Header({ onSave, onToggleHistory, isHistoryOpen, onClear, isSavi
           <Eraser size={16} className="opacity-80" />
           <span className="text-sm font-medium">Clear</span>
         </button>
+
+        {/* Botón Community */}
+        <button
+          onClick={onToggleCommunity}
+          disabled={isSaving}
+          className="flex items-center space-x-2 px-4 py-2 bg-purple-500/10 text-purple-300 
+          rounded-lg border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 
+          transition-all duration-200 shadow-sm hover:shadow-purple-500/10
+          disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Globe size={16} className="opacity-80" />
+          <span className="text-sm font-medium">Community</span>
+        </button>
+
+        {/* Botón Save con spinner */}
         <button
           onClick={onSave}
           disabled={isSaving}
@@ -40,26 +70,31 @@ export function Header({ onSave, onToggleHistory, isHistoryOpen, onClear, isSavi
             <Save size={16} className="opacity-80" />
           )}
           <span className="text-sm font-medium">
-            {isSaving ? 'Saving...' : 'Save Design'}
+            {isSaving ? 'Saving...' : 'Save'}
           </span>
         </button>
+
+        {/* Botón History */}
         <button
           onClick={onToggleHistory}
           disabled={isSaving}
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed
           ${isHistoryOpen
               ? 'bg-gray-700/50 text-gray-200 border border-gray-600/50'
               : 'bg-gray-800/50 text-gray-400 border border-gray-700/50 hover:bg-gray-700/50 hover:text-gray-200'
-            }`}
+            }
+          disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          {isHistoryOpen ? <X size={16} className="opacity-80" /> : <History size={16} className="opacity-80" />}
-          <span className="text-sm font-medium">{isHistoryOpen ? 'Close' : 'History'}</span>
+          {isHistoryOpen ? (
+            <X size={16} className="opacity-80" />
+          ) : (
+            <History size={16} className="opacity-80" />
+          )}
+          <span className="text-sm font-medium">
+            {isHistoryOpen ? 'Close' : 'History'}
+          </span>
         </button>
       </div>
-      {isSaving && (
-        <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50" />
-      )}
     </div>
   );
 }

@@ -269,11 +269,9 @@ button i {
         font-size: 1.8em;
     }
 }
-
 `;
 
 const contentHTML2 = `
-
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
@@ -287,18 +285,18 @@ const contentHTML2 = `
 </head>
 <body>
     <!-- Navegación Principal -->
-   <nav class="main-nav">
+    <nav class="main-nav">
         <div class="nav-grid">
             <div class="nav-left">
                 <a href="#featured-product">NEW IN</a>
                 <a href="#categories">CATEGORÍAS</a>
                 <a href="#collection-preview">COLECCIÓN</a>
             </div>
-            
+
             <div class="nav-center">
                 <a href="#hero" class="logo">MAISON</a>
             </div>
-            
+
             <div class="nav-right">
                 <a href="#search" class="icon">
                     <span class="material-symbols-outlined">search</span>
@@ -333,7 +331,7 @@ const contentHTML2 = `
                 <span class="overline">DESTACADO</span>
                 <h2>Vestido Seda Natural</h2>
                 <p class="description">
-                    Confeccionado en seda natural con un diseño fluido que realza la silueta femenina. 
+                    Confeccionado en seda natural con un diseño fluido que realza la silueta femenina.
                     Una pieza atemporal para ocasiones especiales.
                 </p>
                 <div class="price">598€</div>
@@ -357,7 +355,7 @@ const contentHTML2 = `
                     <span class="category-link">Descubrir</span>
                 </div>
             </a>
-            
+
             <a href="#men" class="category-card">
                 <div class="category-image">
                     <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2" alt="Hombre">
@@ -367,7 +365,7 @@ const contentHTML2 = `
                     <span class="category-link">Descubrir</span>
                 </div>
             </a>
-            
+
             <a href="#accessories" class="category-card">
                 <div class="category-image">
                     <img src="https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93" alt="Accesorios">
@@ -435,8 +433,6 @@ const contentHTML2 = `
     </footer>
 </body>
 </html>
-
-
 `;
 
 const contentCSS2 = `
@@ -735,7 +731,7 @@ h1, h2, h3, h4 {
     .categories-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .footer-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -747,21 +743,20 @@ h1, h2, h3, h4 {
         text-align: center;
         gap: calc(var(--spacing-unit) * 2);
     }
-    
+
     .nav-left, .nav-right {
         justify-content: center;
     }
-    
+
     .featured-image img,
     .category-image img {
         height: 400px;
     }
-    
+
     .footer-grid {
         grid-template-columns: 1fr;
     }
 }
-
 
 /* Añade estos estilos para Collection Preview */
 .collection-preview {
@@ -815,11 +810,11 @@ h1, h2, h3, h4 {
     .collection-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .collection-content {
         text-align: center;
     }
-    
+
     .collection-image {
         height: 500px;
     }
@@ -829,12 +824,11 @@ h1, h2, h3, h4 {
     .collection-image {
         height: 400px;
     }
-    
+
     .collection-content h2 {
         font-size: 2.5rem;
     }
 }
-
 `;
 
 const JS2 = `
@@ -844,7 +838,7 @@ const JS2 = `
 			const target = document.querySelector(this.getAttribute('href'));
 			if (target) {
 				const targetPosition = target.getBoundingClientRect().top + window.pageYOffset;
-				
+
 				window.scrollTo({
 					top: targetPosition,
 					behavior: 'smooth'
@@ -877,6 +871,8 @@ export const initialFiles: EditorFile[][] = [
     {
       id: '4',
       name: 'Registro pacientes',
+      language: 'html',
+      content: 'html',
       tags: ['registro', 'pacientes'],
       favorite: false,
     },
@@ -904,7 +900,9 @@ export const initialFiles: EditorFile[][] = [
     {
       id: '4',
       name: 'Tienda de moda',
+      language: 'html',
       tags: ['tienda', 'moda'],
+      content: 'html',
       favorite: true,
     },
   ],

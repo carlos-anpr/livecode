@@ -10,7 +10,7 @@ interface FileTabProps {
 
 export function FileTab({ file, isActive, onClick }: FileTabProps) {
   const getIcon = () => {
-    switch (file.language) {
+    switch (file?.language) {
       case 'html':
         return <FileType2 className="w-4 h-4" />;
       case 'css':
@@ -25,11 +25,10 @@ export function FileTab({ file, isActive, onClick }: FileTabProps) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 text-sm ${
-        isActive
+      className={`flex items-center gap-2 px-4 py-2 text-sm ${isActive
           ? 'bg-gray-800 text-white'
           : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-      }`}
+        }`}
     >
       {getIcon()}
       {file.name}

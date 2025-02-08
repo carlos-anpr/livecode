@@ -1,8 +1,8 @@
 export interface EditorFile {
   id: string;
   name: string;
-  language?: string;
-  content?: string;
+  language: string;
+  content: string;
   description?: string;
   tags?: string[];
   favorite?: boolean;

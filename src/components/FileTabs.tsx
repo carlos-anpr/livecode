@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileTab } from './FileTab';
-import { EditorFile } from '../types/editor';
+import { EditorFile } from '../types';
 
 interface FileTabsProps {
   files: EditorFile[];

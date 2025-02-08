@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { X, Tag as TagIcon } from 'lucide-react';
+import { X, Tag as TagIcon, Share2 } from 'lucide-react';
 
 interface SaveDesignModalProps {
-  onSave: (name: string, description: string, tags: string[]) => void;
+  onSave: (name: string, description: string, tags: string[], shareWithCommunity: boolean) => void;
   onClose: () => void;
 }
 
@@ -11,6 +11,7 @@ export function SaveDesignModal({ onSave, onClose }: SaveDesignModalProps) {
   const [description, setDescription] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [shareWithCommunity, setShareWithCommunity] = useState(false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -26,7 +27,7 @@ export function SaveDesignModal({ onSave, onClose }: SaveDesignModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSave(name.trim(), description.trim(), tags);
+      onSave(name.trim(), description.trim(), tags, shareWithCommunity);
     }
   };
 
@@ -80,7 +81,7 @@ export function SaveDesignModal({ onSave, onClose }: SaveDesignModalProps) {
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                 className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-blue-500"
                 placeholder="Add tags"
               />
@@ -111,6 +112,20 @@ export function SaveDesignModal({ onSave, onClose }: SaveDesignModalProps) {
                 ))}
               </div>
             )}
+          </div>
+
+          <div className="flex items-center space-x-2 py-2">
+            <input
+              type="checkbox"
+              id="shareWithCommunity"
+              checked={shareWithCommunity}
+              onChange={(e) => setShareWithCommunity(e.target.checked)}
+              className="w-4 h-4 rounded border-gray-700 text-purple-500 focus:ring-purple-500 focus:ring-offset-gray-900"
+            />
+            <label htmlFor="shareWithCommunity" className="flex items-center text-sm text-gray-300 cursor-pointer">
+              <Share2 size={16} className="mr-2 text-purple-400" />
+              Share with community
+            </label>
           </div>
 
           <div className="flex justify-end space-x-3 mt-6">

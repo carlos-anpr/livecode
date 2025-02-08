@@ -1,4 +1,3 @@
-import React from 'react';
 import { Editor } from './Editor';
 import { EditorFile } from '../types/editor';
 
