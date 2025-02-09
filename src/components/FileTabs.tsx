@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileTab } from './FileTab';
 import { EditorFile } from '../types';
 

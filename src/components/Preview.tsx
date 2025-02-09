@@ -1,4 +1,3 @@
-import React from 'react';
 import { EditorFile } from '../types';
 
 interface PreviewProps {
@@ -11,17 +10,42 @@ export function Preview({ files }: PreviewProps) {
   const jsFile = files.find((f) => f.language === 'javascript')?.content || '';
 
   const combinedContent = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <style>${cssFile}</style>
-      </head>
-      <body>
-        ${htmlFile}
-        <script>${jsFile}</script>
-      </body>
-    </html>
-  `;
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <style>${cssFile}</style>
+      <script>
+        // Interceptar todos los clics en enlaces
+        document.addEventListener('click', function(e) {
+          const anchor = e.target.closest('a');
+          if (anchor) {
+            e.preventDefault();
+            const href = anchor.getAttribute('href');
+            
+            // Manejar scroll suave para hashes
+            if (href && href.startsWith('#')) {
+              const section = document.querySelector(href);
+              if (section) {
+                window.scrollTo({
+                  top: section.offsetTop - 80,
+                  behavior: 'smooth'
+                });
+              }
+            }
+            else if (href) {
+              console.warn('Navegación bloqueada:', href);
+              window.open(href, '_blank');
+            }
+          }
+        });
+      </script>
+    </head>
+    <body>
+      ${htmlFile}
+      <script>${jsFile}</script>
+    </body>
+  </html>
+`;
 
   return (
     <iframe
@@ -30,5 +54,7 @@ export function Preview({ files }: PreviewProps) {
       className="w-full h-full bg-white"
       sandbox="allow-scripts"
     />
+
+
   );
 }
