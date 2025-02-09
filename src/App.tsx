@@ -11,11 +11,9 @@ import { CommunityDesignsModal } from './components/CommunityDesignsModal'
 import { EditorFile } from "./types";
 import { SavedDesign } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
-import { manual } from "./data/manual"
+import { manual } from "./data/manual";
+import { designsDB } from "./DB/designsDB";
 import "./styles/split-pane.css";
-
-// In a real app, this would be fetched from Supabase
-const mockSavedDesigns: SavedDesign[] = []
 
 const manualFiles: EditorFile[] = [
   { id: "1", name: "index.html", language: "html", content: manual[0].content },
@@ -28,14 +26,13 @@ export default function App() {
   const [activeFileId, setActiveFileId] = useState(files[0].id);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  const [savedDesigns, setSavedDesigns] =
-    useState<SavedDesign[]>(mockSavedDesigns);
+  const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
     initialFiles.map((design, index) => ({
-      id: String(index),
+      id: Number(index),
       name: design[3]?.name ?? "Untitled Design",
       description: design[3]?.description ?? "",
       html: design[0].content ?? "",
@@ -51,11 +48,22 @@ export default function App() {
 
   const activeFile = files.find((f) => f.id === activeFileId)!;
 
+  useEffect(() => {
+    loadSavedDesigns();
+  }, []);
+
+  const loadSavedDesigns = async () => {
+    try {
+      const designs = await designsDB.getAllDesigns();
+      setSavedDesigns(designs);
+    } catch (error) {
+      console.error('Error loading designs:', error);
+    }
+  };
 
   const handleTogglePreview = () => {
     setIsPreviewMode(!isPreviewMode);
   };
-
 
   const handleSelectCommunityDesign = (design: SavedDesign) => {
     handleSelectDesign(design);
@@ -74,52 +82,44 @@ export default function App() {
     ]);
   };
 
-
   const captureScreenshot = async () => {
     const container = document.createElement("div");
     container.style.position = "absolute";
-    container.style.left = "-9999px"; // Ocultar fuera de la pantalla
-    container.style.width = "800px"; // Ajustar al tamaño deseado
+    container.style.left = "-9999px";
+    container.style.width = "800px";
     container.style.height = "600px";
-    container.style.backgroundColor = "#ffffff"; // Fondo blanco para la captura
+    container.style.backgroundColor = "#ffffff";
 
-    // Obtener los contenidos del editor
     const htmlContent = files.find((f) => f.language === "html")?.content || "";
     const cssContent = files.find((f) => f.language === "css")?.content || "";
 
-    // Renderizar el contenido dentro del contenedor temporal
     container.innerHTML = `
-    <html>
-      <head>
-        <style>${cssContent}</style>
-      </head>
-      <body>
-        ${htmlContent}
-      </body>
-    </html>
-  `;
+      <html>
+        <head>
+          <style>${cssContent}</style>
+        </head>
+        <body>
+          ${htmlContent}
+        </body>
+      </html>
+    `;
     document.body.appendChild(container);
 
     try {
-      // Capturar el contenedor con html2canvas
       const canvas = await html2canvas(container, {
         width: 800,
         height: 600,
-        scale: 2, // Aumentar resolución
+        scale: 2,
         useCORS: true,
         allowTaint: true,
       });
 
-      // Convertir el canvas a una imagen en formato base64
       const screenshot = canvas.toDataURL("image/png", 1.0);
-
-      // Limpiar el contenedor temporal
       document.body.removeChild(container);
-
       return screenshot;
     } catch (error) {
       console.error("Error capturing screenshot:", error);
-      document.body.removeChild(container); // Limpiar incluso en caso de error
+      document.body.removeChild(container);
       return null;
     }
   };
@@ -135,13 +135,9 @@ export default function App() {
       const htmlFile = files.find((f) => f.language === "html")?.content || "";
       const cssFile = files.find((f) => f.language === "css")?.content || "";
       const jsFile = files.find((f) => f.language === "javascript")?.content || "";
-
-      setIsSaveModalOpen(false);
-
       const screenshot = await captureScreenshot();
 
-      const newDesign: SavedDesign = {
-        id: Date.now().toString(),
+      const newDesign = {
         name,
         description,
         html: htmlFile,
@@ -152,17 +148,21 @@ export default function App() {
         favorite: false,
         tags,
         screenshot,
+        shareWithCommunity
       };
 
-      // Guardar en el historial personal
-      setSavedDesigns([newDesign, ...savedDesigns]);
+      const savedId = await designsDB.saveDesign(newDesign);
 
-      // Si se marca para compartir, también guardar en la comunidad
       if (shareWithCommunity) {
-        setCommunityDesigns([newDesign, ...communityDesigns]);
+        const designWithId = {
+          ...newDesign,
+          id: Number(savedId)
+        };
+        setCommunityDesigns([designWithId, ...communityDesigns]);
       }
 
-
+      await loadSavedDesigns();
+      setIsSaveModalOpen(false);
     } catch (error) {
       console.error("Error saving design:", error);
     } finally {
@@ -170,33 +170,38 @@ export default function App() {
     }
   };
 
+
   const handleSelectDesign = (design: SavedDesign) => {
     setFiles([
       { id: "1", name: "index.html", language: "html", content: design.html },
       { id: "2", name: "styles.css", language: "css", content: design.css },
-      {
-        id: "3",
-        name: "script.js",
-        language: "javascript",
-        content: design.javascript,
-      },
+      { id: "3", name: "script.js", language: "javascript", content: design.javascript },
     ]);
     setIsHistoryOpen(false);
   };
 
-  const handleToggleFavorite = (id: string) => {
-    setSavedDesigns(
-      savedDesigns.map((design) =>
-        design.id === id ? { ...design, favorite: !design.favorite } : design
-      )
-    );
+  const handleToggleFavorite = async (id: number) => {
+    try {
+      const design = savedDesigns.find(d => d.id === id);
+      if (design) {
+        const updatedDesign = { ...design, favorite: !design.favorite };
+        await designsDB.updateDesign(Number(id), updatedDesign);
+        await loadSavedDesigns();
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
-  const handleDeleteDesign = (id: string) => {
-    setSavedDesigns(savedDesigns.filter((design) => design.id !== id));
+  const handleDeleteDesign = async (id: number) => {
+    try {
+      await designsDB.deleteDesign(Number(id));
+      await loadSavedDesigns();
+    } catch (error) {
+      console.error("Error deleting design:", error);
+    }
   };
 
-  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
@@ -251,7 +256,6 @@ export default function App() {
         <EditorPane
           file={activeFile}
           onChange={handleFileChange}
-
         />
         <PreviewPane files={files} />
       </Split>

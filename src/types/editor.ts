@@ -9,7 +9,7 @@ export interface EditorFile {
 }
 
 export interface SavedDesign {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   html: string;
@@ -19,5 +19,6 @@ export interface SavedDesign {
   updated_at: string;
   favorite: boolean;
   tags: string[];
-  screenshot?: string | null | undefined;
+  screenshot?: string | null;
+  shareWithCommunity?: boolean;
 }
