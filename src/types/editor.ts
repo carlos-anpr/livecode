@@ -9,7 +9,7 @@ export interface EditorFile {
 }
 
 export interface SavedDesign {
-  id: number;
+  id: string;
   name: string;
   description?: string;
   html: string;

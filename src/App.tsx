@@ -30,9 +30,10 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
+  const [currentDesign, setCurrentDesign] = useState<SavedDesign | null>(null);
   const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
-    initialFiles.map((design, index) => ({
-      id: Number(index),
+    initialFiles.map((design) => ({
+      id: crypto.randomUUID(),
       name: design[3]?.name ?? "Untitled Design",
       description: design[3]?.description ?? "",
       html: design[0].content ?? "",
@@ -66,6 +67,7 @@ export default function App() {
   };
 
   const handleSelectCommunityDesign = (design: SavedDesign) => {
+    setCurrentDesign(design);
     handleSelectDesign(design);
     setIsCommunityOpen(false);
   };
@@ -75,6 +77,7 @@ export default function App() {
   };
 
   const handleClearDesign = () => {
+    setCurrentDesign(null)
     setFiles([
       { id: "1", name: "index.html", language: "html", content: "" },
       { id: "2", name: "styles.css", language: "css", content: "" },
@@ -135,34 +138,68 @@ export default function App() {
       const htmlFile = files.find((f) => f.language === "html")?.content || "";
       const cssFile = files.find((f) => f.language === "css")?.content || "";
       const jsFile = files.find((f) => f.language === "javascript")?.content || "";
+
+      setIsSaveModalOpen(false);
+
       const screenshot = await captureScreenshot();
 
-      const newDesign = {
+      const designData = {
+        id: currentDesign?.id || crypto.randomUUID(),
         name,
         description,
         html: htmlFile,
         css: cssFile,
         javascript: jsFile,
-        created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        favorite: false,
+        favorite: currentDesign?.favorite || false,
         tags,
         screenshot,
         shareWithCommunity
       };
 
-      const savedId = await designsDB.saveDesign(newDesign);
+      if (currentDesign?.id) {
+        await designsDB.updateDesign(currentDesign?.id, {
+          ...designData,
+          created_at: currentDesign?.created_at
+        });
 
-      if (shareWithCommunity) {
-        const designWithId = {
-          ...newDesign,
-          id: Number(savedId)
+        if (shareWithCommunity) {
+          setCommunityDesigns(prevDesigns => {
+            const designExists = prevDesigns.some(design => design.id === currentDesign?.id);
+
+            if (designExists) {
+              return prevDesigns.map(design =>
+                design.id === currentDesign?.id
+                  ? {
+                    ...design,
+                    ...designData,
+                    created_at: currentDesign.created_at
+                  }
+                  : design
+              );
+            } else {
+              return [{
+                ...designData,
+                created_at: new Date().toISOString()
+              }, ...prevDesigns];
+            }
+          });
+        }
+      } else {
+        const newDesign = {
+          ...designData,
+          created_at: new Date().toISOString()
         };
-        setCommunityDesigns([designWithId, ...communityDesigns]);
+
+        await designsDB.saveDesign(newDesign);
+
+        if (shareWithCommunity) {
+          setCommunityDesigns(prevDesigns => [newDesign, ...prevDesigns]);
+        }
       }
 
       await loadSavedDesigns();
-      setIsSaveModalOpen(false);
+
     } catch (error) {
       console.error("Error saving design:", error);
     } finally {
@@ -171,7 +208,9 @@ export default function App() {
   };
 
 
+
   const handleSelectDesign = (design: SavedDesign) => {
+    setCurrentDesign(design)
     setFiles([
       { id: "1", name: "index.html", language: "html", content: design.html },
       { id: "2", name: "styles.css", language: "css", content: design.css },
@@ -180,12 +219,12 @@ export default function App() {
     setIsHistoryOpen(false);
   };
 
-  const handleToggleFavorite = async (id: number) => {
+  const handleToggleFavorite = async (id: string) => {
     try {
       const design = savedDesigns.find(d => d.id === id);
       if (design) {
         const updatedDesign = { ...design, favorite: !design.favorite };
-        await designsDB.updateDesign(Number(id), updatedDesign);
+        await designsDB.updateDesign(id, updatedDesign);
         await loadSavedDesigns();
       }
     } catch (error) {
@@ -193,9 +232,9 @@ export default function App() {
     }
   };
 
-  const handleDeleteDesign = async (id: number) => {
+  const handleDeleteDesign = async (id: string) => {
     try {
-      await designsDB.deleteDesign(Number(id));
+      await designsDB.deleteDesign(id);
       await loadSavedDesigns();
     } catch (error) {
       console.error("Error deleting design:", error);
@@ -271,6 +310,7 @@ export default function App() {
 
       {isSaveModalOpen && (
         <SaveDesignModal
+          currentDesign={currentDesign}
           onSave={handleSaveDesign}
           onClose={() => setIsSaveModalOpen(false)}
         />

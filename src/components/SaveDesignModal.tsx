@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { X, Tag as TagIcon, Share2 } from 'lucide-react';
+import { SavedDesign } from '../types/editor'
 
 interface SaveDesignModalProps {
+  currentDesign: SavedDesign | null,
   onSave: (name: string, description: string, tags: string[], shareWithCommunity: boolean) => void;
   onClose: () => void;
 }
 
-export function SaveDesignModal({ onSave, onClose }: SaveDesignModalProps) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+export function SaveDesignModal({ currentDesign, onSave, onClose }: SaveDesignModalProps) {
+  const [name, setName] = useState(currentDesign?.name ?? '');
+  const [description, setDescription] = useState(currentDesign?.description ?? '');
   const [tagInput, setTagInput] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [shareWithCommunity, setShareWithCommunity] = useState(false);
+  const [tags, setTags] = useState<string[]>(currentDesign?.tags ?? []);
+  const [shareWithCommunity, setShareWithCommunity] = useState(currentDesign?.shareWithCommunity ?? false);
 
   const handleAddTag = () => {
     if (tagInput.trim() && !tags.includes(tagInput.trim())) {

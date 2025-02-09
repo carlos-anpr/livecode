@@ -39,7 +39,7 @@ export const designsDB = {
     });
   },
 
-  async updateDesign(id: number, design: Partial<SavedDesign>): Promise<void> {
+  async updateDesign(id: string, design: Partial<SavedDesign>): Promise<void> {
     const db = await this.init();
     return new Promise((resolve, reject) => {
       const transaction = (db as IDBDatabase).transaction(
@@ -74,7 +74,7 @@ export const designsDB = {
     });
   },
 
-  async deleteDesign(id: number) {
+  async deleteDesign(id: string) {
     const db = await this.init();
     return new Promise((resolve, reject) => {
       const transaction = (db as IDBDatabase).transaction(

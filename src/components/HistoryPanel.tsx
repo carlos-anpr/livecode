@@ -5,8 +5,8 @@ import { SavedDesign } from '../types/editor';
 interface HistoryPanelProps {
   designs: SavedDesign[];
   onSelect: (design: SavedDesign) => void;
-  onToggleFavorite: (id: number) => void;
-  onDelete: (id: number) => void;
+  onToggleFavorite: (id: string) => void;
+  onDelete: (id: string) => void;
   isOpen: boolean;
   onClose: () => void;
 }
