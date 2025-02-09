@@ -234,6 +234,7 @@ export default function App() {
 
   const handleDeleteDesign = async (id: string) => {
     try {
+      setCurrentDesign(null)
       await designsDB.deleteDesign(id);
       await loadSavedDesigns();
     } catch (error) {
@@ -253,6 +254,43 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+
+  const handleDownload = () => {
+    const htmlContent = files.find((f) => f.language === "html")?.content || "";
+    const cssContent = files.find((f) => f.language === "css")?.content || "";
+    const jsContent = files.find((f) => f.language === "javascript")?.content || "";
+
+    const fullContent = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      ${cssContent}
+    </style>
+  </head>
+  <body>
+    ${htmlContent}
+    <script>
+      ${jsContent}
+    </script>
+  </body>
+  </html>`;
+
+    const blob = new Blob([fullContent], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "zephyr-design.html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+
+
+
   return (
     <div className="h-screen bg-gray-900 flex flex-col">
       <Header
@@ -262,6 +300,7 @@ export default function App() {
         onTogglePreview={handleTogglePreview}
         isHistoryOpen={isHistoryOpen}
         isPreviewMode={isPreviewMode}
+        onDownload={handleDownload}
         onClear={handleClearDesign}
         isSaving={isSaving}
       />

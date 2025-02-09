@@ -52,7 +52,7 @@ export function Preview({ files }: PreviewProps) {
       title="preview"
       srcDoc={combinedContent}
       className="w-full h-full bg-white"
-      sandbox="allow-scripts"
+      sandbox="allow-scripts allow-same-origin"
     />
 
 

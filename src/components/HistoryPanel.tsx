@@ -45,7 +45,7 @@ export function HistoryPanel({
         ref={panelRef}
         className="fixed inset-y-0 right-0 w-96 bg-gray-900 border-l border-gray-700 shadow-xl z-50 overflow-y-auto"
       >
-        <div className="sticky top-0 bg-gray-900 border-b border-gray-700 p-4 flex justify-between items-center">
+        <div className="sticky top-0 bg-gray-900 border-b border-gray-700 p-4 flex justify-between items-center z-20">
           <h2 className="text-xl font-semibold text-white">Saved Designs</h2>
           <button
             onClick={onClose}
@@ -55,7 +55,7 @@ export function HistoryPanel({
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 relative z-10">
           <div className="mb-6">
             <input
               type="text"
@@ -68,7 +68,7 @@ export function HistoryPanel({
             {designs.map((design) => (
               <div
                 key={design.id}
-                className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors cursor-pointer group"
+                className="relative bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors cursor-pointer group"
                 onClick={() => onSelect(design)}
               >
                 <div className="relative mb-3 rounded-md overflow-hidden bg-gray-700 aspect-video">
@@ -77,6 +77,7 @@ export function HistoryPanel({
                       src={design.screenshot}
                       alt={design.name}
                       className="w-full h-full object-cover"
+                      style={{ zIndex: 1 }}
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-500">

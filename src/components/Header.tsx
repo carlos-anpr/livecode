@@ -1,4 +1,5 @@
-import { Save, History, X, Eraser, Loader2, Globe, Maximize2, Minimize2 } from 'lucide-react';
+import { Save, History, X, Eraser, Loader2, Globe, Maximize2, Minimize2, Download } from 'lucide-react';
+
 import ZephyrIcon from './ZephyrIcon';
 
 interface HeaderProps {
@@ -6,17 +7,20 @@ interface HeaderProps {
   onToggleHistory: () => void;
   onToggleCommunity: () => void;
   onTogglePreview: () => void;
+  onDownload: () => void;
   isHistoryOpen: boolean;
   isPreviewMode: boolean;
   onClear: () => void;
   isSaving: boolean;
 }
 
+
 export function Header({
   onSave,
   onToggleHistory,
   onToggleCommunity,
   onTogglePreview,
+  onDownload,
   isHistoryOpen,
   isPreviewMode,
   onClear,
@@ -36,7 +40,6 @@ export function Header({
       )}
 
       <div className="flex items-center space-x-3 relative">
-
         <button
           onClick={onClear}
           disabled={isSaving}
@@ -80,6 +83,17 @@ export function Header({
           <Globe size={16} className="opacity-80" />
           <span className="text-sm font-medium">Community</span>
         </button>
+
+        <button
+          onClick={onDownload}
+          disabled={isSaving}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-500/10 text-blue-300 rounded-lg border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 transition-all duration-200 shadow-sm hover:shadow-blue-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Download size={16} className="opacity-80" />
+          <span className="text-sm font-medium">Download</span>
+        </button>
+
+
 
         <button
           onClick={onSave}
