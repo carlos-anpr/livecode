@@ -8,8 +8,7 @@ import { Header } from "./components/Header";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { SaveDesignModal } from "./components/SaveDesignModal";
 import { CommunityDesignsModal } from './components/CommunityDesignsModal'
-import { EditorFile } from "./types";
-import { SavedDesign, ImageFile } from "./types/editor";
+import { EditorFile, SavedDesign, ImageFile } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
 import { manual } from "./data/manual";
 import { designsDB } from "./DB/designsDB";
@@ -20,7 +19,7 @@ const manualFiles: EditorFile[] = [
   { id: "1", name: "index.html", language: "html", content: manual[0].content },
   { id: "2", name: "styles.css", language: "css", content: manual[1].content },
   { id: "3", name: "script.js", language: "javascript", content: manual[2].content },
-  { id: "4", name: "images", language: "images", content: "" }
+  { id: "4", name: "images", language: "images", content: "", images: [] }
 ];
 
 export default function App() {
@@ -42,7 +41,7 @@ export default function App() {
       html: design[0].content ?? "",
       css: design[1].content ?? "",
       javascript: design[2].content ?? "",
-      images: design[3].content ?? "",
+      images: design[3]?.images ?? [],
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       favorite: design[4]?.favorite ?? false,
@@ -72,6 +71,7 @@ export default function App() {
 
   const handleSelectCommunityDesign = (design: SavedDesign) => {
     setCurrentDesign(design);
+    setUploadedImages(design.images ?? [])
     handleSelectDesign(design);
     setIsCommunityOpen(false);
   };
@@ -82,11 +82,12 @@ export default function App() {
 
   const handleClearDesign = () => {
     setCurrentDesign(null)
+    setUploadedImages([])
     setFiles([
       { id: "1", name: "index.html", language: "html", content: "" },
       { id: "2", name: "styles.css", language: "css", content: "" },
       { id: "3", name: "script.js", language: "javascript", content: "" },
-      { id: "4", name: "images", language: "images", content: "" }
+      { id: "4", name: "images", language: "images", content: "", images: [] }
     ]);
   };
 
@@ -163,7 +164,7 @@ export default function App() {
         html: htmlFile,
         css: cssFile,
         javascript: jsFile,
-        images: '',
+        images: uploadedImages,
         updated_at: new Date().toISOString(),
         favorite: currentDesign?.favorite || false,
         tags,
@@ -171,17 +172,21 @@ export default function App() {
         shareWithCommunity
       };
 
-      if (currentDesign?.id) {
-        await designsDB.updateDesign(currentDesign?.id, {
+      console.log('-------currentDesign?.id------', currentDesign?.id)
+
+      const existingDesignLocal = await designsDB.getDesignById(designData.id);
+
+      if (existingDesignLocal) {
+        await designsDB.updateDesign(designData?.id, {
           ...designData,
           created_at: currentDesign?.created_at
         });
 
         if (shareWithCommunity) {
           setCommunityDesigns(prevDesigns => {
-            const designExists = prevDesigns.some(design => design.id === currentDesign?.id);
+            const designExistsCommunity = prevDesigns.some(design => design.id === currentDesign?.id);
 
-            if (designExists) {
+            if (designExistsCommunity) {
               return prevDesigns.map(design =>
                 design.id === currentDesign?.id
                   ? {
@@ -208,7 +213,26 @@ export default function App() {
         await designsDB.saveDesign(newDesign);
 
         if (shareWithCommunity) {
-          setCommunityDesigns(prevDesigns => [newDesign, ...prevDesigns]);
+          setCommunityDesigns(prevDesigns => {
+            const designExistsCommunity = prevDesigns.some(design => design.id === currentDesign?.id);
+
+            if (designExistsCommunity) {
+              return prevDesigns.map(design =>
+                design.id === currentDesign?.id
+                  ? {
+                    ...design,
+                    ...designData,
+                    created_at: currentDesign.created_at
+                  }
+                  : design
+              );
+            } else {
+              return [{
+                ...designData,
+                created_at: new Date().toISOString()
+              }, ...prevDesigns];
+            }
+          });
         }
       }
 
@@ -225,11 +249,12 @@ export default function App() {
 
   const handleSelectDesign = (design: SavedDesign) => {
     setCurrentDesign(design)
+    setUploadedImages(design.images ?? [])
     setFiles([
       { id: "1", name: "index.html", language: "html", content: design.html },
       { id: "2", name: "styles.css", language: "css", content: design.css },
       { id: "3", name: "script.js", language: "javascript", content: design.javascript },
-      { id: '4', name: 'images', language: 'images', content: design.images },
+      { id: '4', name: 'images', language: 'images', content: '', images: design.images ?? [] },
     ]);
     setIsHistoryOpen(false);
   };
@@ -276,21 +301,21 @@ export default function App() {
     const jsContent = files.find((f) => f.language === "javascript")?.content || "";
 
     const fullContent = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <style>
-      ${cssContent}
-    </style>
-  </head>
-  <body>
-    ${htmlContent}
-    <script>
-      ${jsContent}
-    </script>
-  </body>
-  </html>`;
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>
+            ${cssContent}
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+          <script>
+            ${jsContent}
+          </script>
+        </body>
+        </html>`;
 
     const blob = new Blob([fullContent], { type: "text/html" });
     const url = URL.createObjectURL(blob);
@@ -333,8 +358,6 @@ export default function App() {
         onFileSelect={setActiveFileId}
       />
 
-
-
       <Split
         className="flex-1 flex"
         sizes={isPreviewMode ? [0, 100] : [35, 65]}
@@ -361,11 +384,8 @@ export default function App() {
             />
           )}
         </div>
-        <PreviewPane files={files} />
+        <PreviewPane files={files} images={uploadedImages} />
       </Split>
-
-
-
 
       <HistoryPanel
         designs={savedDesigns}

@@ -3,6 +3,7 @@ export interface EditorFile {
   name: string;
   language: string;
   content: string;
+  images?: ImageFile[];
   description?: string;
   tags?: string[];
   favorite?: boolean;
@@ -15,7 +16,7 @@ export interface SavedDesign {
   html: string;
   css: string;
   javascript: string;
-  images: string;
+  images: ImageFile[];
   created_at: string;
   updated_at: string;
   favorite: boolean;
@@ -30,4 +31,5 @@ export interface ImageFile {
   file: File;
   originalSize: number;
   compressedSize: number;
+  originalName: string;
 }

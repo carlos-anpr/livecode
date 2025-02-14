@@ -873,6 +873,7 @@ export const initialFiles: EditorFile[][] = [
       name: 'images',
       language: 'images',
       content: '',
+      images: [],
     },
     {
       id: '5',
@@ -908,6 +909,7 @@ export const initialFiles: EditorFile[][] = [
       name: 'images',
       language: 'images',
       content: '',
+      images: [],
     },
     {
       id: '5',

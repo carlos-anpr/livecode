@@ -400,6 +400,7 @@ export const manual: EditorFile[] = [
     name: 'images',
     language: 'images',
     content: '',
+    images: [],
   },
   {
     id: '5',
