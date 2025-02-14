@@ -1,4 +1,4 @@
-import { Save, History, X, Eraser, Loader2, Globe, Maximize2, Minimize2, Download } from 'lucide-react';
+import { Plus, Save, History, X, Loader2, Globe, Maximize2, Minimize2, Download } from 'lucide-react';
 
 import ZephyrIcon from './ZephyrIcon';
 
@@ -48,8 +48,8 @@ export function Header({
           hover:text-red-200 transition-all duration-200 shadow-sm hover:shadow-red-500/10
           disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Eraser size={16} className="opacity-80" />
-          <span className="text-sm font-medium">Clear</span>
+          <Plus size={16} className="opacity-80" />
+          <span className="text-sm font-medium">New</span>
         </button>
 
         <button

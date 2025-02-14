@@ -15,10 +15,19 @@ export interface SavedDesign {
   html: string;
   css: string;
   javascript: string;
+  images: string;
   created_at: string;
   updated_at: string;
   favorite: boolean;
   tags: string[];
   screenshot?: string | null;
   shareWithCommunity?: boolean;
+}
+
+export interface ImageFile {
+  id: string;
+  preview: string;
+  file: File;
+  originalSize: number;
+  compressedSize: number;
 }

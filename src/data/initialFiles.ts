@@ -870,6 +870,12 @@ export const initialFiles: EditorFile[][] = [
     },
     {
       id: '4',
+      name: 'images',
+      language: 'images',
+      content: '',
+    },
+    {
+      id: '5',
       name: 'Registro pacientes',
       language: 'html',
       content: 'html',
@@ -899,6 +905,12 @@ export const initialFiles: EditorFile[][] = [
     },
     {
       id: '4',
+      name: 'images',
+      language: 'images',
+      content: '',
+    },
+    {
+      id: '5',
       name: 'Tienda de moda',
       language: 'html',
       tags: ['tienda', 'moda'],

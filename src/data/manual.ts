@@ -395,4 +395,18 @@ export const manual: EditorFile[] = [
     language: 'javascript',
     content: 'console.log("Hello from JavaScript!");',
   },
+  {
+    id: '4',
+    name: 'images',
+    language: 'images',
+    content: '',
+  },
+  {
+    id: '5',
+    name: 'Manual Zephyr',
+    language: 'html',
+    content: 'html',
+    tags: ['manual', 'zephyr'],
+    favorite: false,
+  },
 ];

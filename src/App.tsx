@@ -9,16 +9,18 @@ import { HistoryPanel } from "./components/HistoryPanel";
 import { SaveDesignModal } from "./components/SaveDesignModal";
 import { CommunityDesignsModal } from './components/CommunityDesignsModal'
 import { EditorFile } from "./types";
-import { SavedDesign } from "./types/editor";
+import { SavedDesign, ImageFile } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
 import { manual } from "./data/manual";
 import { designsDB } from "./DB/designsDB";
+import { ImageTab } from "./components/ImageTab";
 import "./styles/split-pane.css";
 
 const manualFiles: EditorFile[] = [
   { id: "1", name: "index.html", language: "html", content: manual[0].content },
   { id: "2", name: "styles.css", language: "css", content: manual[1].content },
-  { id: "3", name: "script.js", language: "javascript", content: manual[2].content }
+  { id: "3", name: "script.js", language: "javascript", content: manual[2].content },
+  { id: "4", name: "images", language: "images", content: "" }
 ];
 
 export default function App() {
@@ -31,18 +33,20 @@ export default function App() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [currentDesign, setCurrentDesign] = useState<SavedDesign | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<ImageFile[]>([]);
   const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
     initialFiles.map((design) => ({
       id: crypto.randomUUID(),
-      name: design[3]?.name ?? "Untitled Design",
+      name: design[4]?.name ?? "Untitled Design",
       description: design[3]?.description ?? "",
       html: design[0].content ?? "",
       css: design[1].content ?? "",
       javascript: design[2].content ?? "",
+      images: design[3].content ?? "",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      favorite: design[3]?.favorite ?? false,
-      tags: design[3]?.tags ?? [],
+      favorite: design[4]?.favorite ?? false,
+      tags: design[4]?.tags ?? [],
       screenshot: null
     }))
   );
@@ -81,7 +85,8 @@ export default function App() {
     setFiles([
       { id: "1", name: "index.html", language: "html", content: "" },
       { id: "2", name: "styles.css", language: "css", content: "" },
-      { id: "3", name: "script.js", language: "javascript", content: "" }
+      { id: "3", name: "script.js", language: "javascript", content: "" },
+      { id: "4", name: "images", language: "images", content: "" }
     ]);
   };
 
@@ -96,10 +101,16 @@ export default function App() {
     const htmlContent = files.find((f) => f.language === "html")?.content || "";
     const cssContent = files.find((f) => f.language === "css")?.content || "";
 
+    const cssSafe = cssContent
+      .split('\n')
+      .filter(line => !line.match('linear-gradient.*to right'))
+      .join('\n');
+
+
     container.innerHTML = `
       <html>
         <head>
-          <style>${cssContent}</style>
+          <style>${cssSafe}</style>
         </head>
         <body>
           ${htmlContent}
@@ -112,9 +123,11 @@ export default function App() {
       const canvas = await html2canvas(container, {
         width: 800,
         height: 600,
-        scale: 2,
+        scale: 1,
         useCORS: true,
         allowTaint: true,
+        backgroundColor: '#ffffff',
+
       });
 
       const screenshot = canvas.toDataURL("image/png", 1.0);
@@ -150,6 +163,7 @@ export default function App() {
         html: htmlFile,
         css: cssFile,
         javascript: jsFile,
+        images: '',
         updated_at: new Date().toISOString(),
         favorite: currentDesign?.favorite || false,
         tags,
@@ -215,6 +229,7 @@ export default function App() {
       { id: "1", name: "index.html", language: "html", content: design.html },
       { id: "2", name: "styles.css", language: "css", content: design.css },
       { id: "3", name: "script.js", language: "javascript", content: design.javascript },
+      { id: '4', name: 'images', language: 'images', content: design.images },
     ]);
     setIsHistoryOpen(false);
   };
@@ -317,6 +332,9 @@ export default function App() {
         activeFileId={activeFileId}
         onFileSelect={setActiveFileId}
       />
+
+
+
       <Split
         className="flex-1 flex"
         sizes={isPreviewMode ? [0, 100] : [35, 65]}
@@ -329,14 +347,25 @@ export default function App() {
         dragInterval={1}
         direction="horizontal"
         cursor="col-resize"
-        style={{ transition: "all 0.2s ease" }}
       >
-        <EditorPane
-          file={activeFile}
-          onChange={handleFileChange}
-        />
+        <div className="editor-container">
+          {activeFile.language === 'images' ? (
+            <ImageTab
+              images={uploadedImages}
+              setImages={setUploadedImages}
+            />
+          ) : (
+            <EditorPane
+              file={activeFile}
+              onChange={handleFileChange}
+            />
+          )}
+        </div>
         <PreviewPane files={files} />
       </Split>
+
+
+
 
       <HistoryPanel
         designs={savedDesigns}

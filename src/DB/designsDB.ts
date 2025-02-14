@@ -103,4 +103,22 @@ export const designsDB = {
       request.onerror = () => reject(request.error);
     });
   },
+
+  async getDesignById(id: string): Promise<SavedDesign | null> {
+    const db = await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = (db as IDBDatabase).transaction(
+        ['designs'],
+        'readonly'
+      );
+      const store = transaction.objectStore('designs');
+      const request = store.get(id);
+
+      request.onsuccess = () => {
+        // Si no existe el diseño, request.result será undefined
+        resolve(request.result || null);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  },
 };
