@@ -44,8 +44,8 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
     };
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
-        if (images.length + acceptedFiles.length > 30) {
-            alert('Máximo 30 imágenes permitidas');
+        if (images.length + acceptedFiles.length > 40) {
+            alert('Máximo 40 imágenes permitidas');
             return;
         }
 
@@ -79,7 +79,7 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
             'image/*': ['.jpeg', '.jpg', '.png', '.webp']
         },
         maxSize: 2 * 1024 * 1024,
-        maxFiles: 30
+        maxFiles: 40
     });
     return (
         <div className="flex flex-col h-full bg-gray-900">

@@ -87,11 +87,23 @@ export function Preview({ files, images }: PreviewProps) {
 
 
   return (
-    <iframe
-      title="preview"
-      srcDoc={combinedContent}
-      className="w-full h-full bg-white"
-      sandbox="allow-scripts allow-same-origin"
-    />
+    <div className="relative w-full h-full">
+      <button
+        className="absolute top-2 left-2 z-10 p-2 backdrop-blur-sm bg-white/20 dark:bg-black/20 text-black dark:text-white border border-gray-500/20 hover:bg-white/30 dark:hover:bg-black/30 rounded-md transition-all duration-200 shadow-sm text-xl font-bold"
+        onClick={() => document.querySelector('iframe')?.contentWindow?.location.reload()}
+      >
+        ↻
+      </button>
+
+
+
+      <iframe
+        title="preview"
+        srcDoc={combinedContent}
+        className="w-full h-full bg-white"
+        style={{ position: 'relative', zIndex: 1 }}
+        sandbox="allow-scripts allow-same-origin"
+      />
+    </div>
   );
 }
