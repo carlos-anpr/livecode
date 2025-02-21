@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { Star, Clock, Tag, Trash2, X } from 'lucide-react';
 import { SavedDesign } from '../types/editor';
 
@@ -20,6 +20,17 @@ export function HistoryPanel({
   onClose
 }: HistoryPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const sortedDesigns = useMemo(() => {
+    return [...designs].sort((a, b) => {
+      // Primero ordena por favoritos
+      if (a.favorite && !b.favorite) return -1;
+      if (!a.favorite && b.favorite) return 1;
+
+      // Si tienen el mismo estado de favorito, ordena por fecha
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
+  }, [designs]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,7 +76,7 @@ export function HistoryPanel({
           </div>
 
           <div className="space-y-4">
-            {designs.map((design) => (
+            {sortedDesigns.map((design) => (
               <div
                 key={design.id}
                 className="relative bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors cursor-pointer group"
