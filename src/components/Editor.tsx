@@ -42,7 +42,7 @@ export function Editor({ file, onChange }: EditorProps) {
 
   return (
     <div
-      style={{ height: '100%' }}
+      style={{ height: '99%' }}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >

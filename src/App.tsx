@@ -23,6 +23,7 @@ const manualFiles: EditorFile[] = [
 ];
 
 export default function App() {
+  const [splitSizes, setSplitSizes] = useState([35, 65]);
   const [files, setFiles] = useState<EditorFile[]>(manualFiles);
   const [activeFileId, setActiveFileId] = useState(files[0].id);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -77,7 +78,9 @@ export default function App() {
   };
 
   const handleFileChange = (content: string) => {
-    setFiles(files.map((f) => (f.id === activeFileId ? { ...f, content } : f)));
+    setFiles(files.map((f) =>
+      f.id === activeFileId ? { ...f, content } : f
+    ));
   };
 
   const handleClearDesign = () => {
@@ -172,8 +175,6 @@ export default function App() {
         shareWithCommunity
       };
 
-      console.log('-------currentDesign?.id------', currentDesign?.id)
-
       const existingDesignLocal = await designsDB.getDesignById(designData.id);
 
       if (existingDesignLocal) {
@@ -244,8 +245,6 @@ export default function App() {
       setIsSaving(false);
     }
   };
-
-
 
   const handleSelectDesign = (design: SavedDesign) => {
     setCurrentDesign(design)
@@ -360,7 +359,7 @@ export default function App() {
 
       <Split
         className="flex-1 flex"
-        sizes={isPreviewMode ? [0, 100] : [35, 65]}
+        sizes={isPreviewMode ? [0, 100] : splitSizes}
         minSize={isPreviewMode ? [0, 100] : [300, 300]}
         maxSize={isPreviewMode ? [0, Infinity] : [960, Infinity]}
         expandToMin={false}
@@ -370,6 +369,7 @@ export default function App() {
         dragInterval={1}
         direction="horizontal"
         cursor="col-resize"
+        onDragEnd={(newSizes) => setSplitSizes(newSizes)}
       >
         <div className="editor-container">
           {activeFile.language === 'images' ? (
@@ -379,8 +379,9 @@ export default function App() {
             />
           ) : (
             <EditorPane
-              file={activeFile}
-              onChange={handleFileChange}
+              files={files}
+              activeFileId={activeFileId}
+              onChange={(content) => handleFileChange(content)}
             />
           )}
         </div>

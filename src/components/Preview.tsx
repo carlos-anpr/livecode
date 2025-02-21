@@ -10,26 +10,18 @@ export function Preview({ files, images }: PreviewProps) {
   const cssFile = files.find((f) => f.language === 'css')?.content || '';
   const jsFile = files.find((f) => f.language === 'javascript')?.content || '';
 
-  // Función para reemplazar las rutas de imágenes con base64
   const replaceImageSources = (content: string, isCSS: boolean = false) => {
-    // Regex para HTML y CSS
     const htmlRegex = /<img[^>]+src=["']([^"']+)["'][^>]*/g;
     const cssRegex = /(?:background-image:|background:)[^;]*?url\(['"]?([^'")\s]+)['"]?\)/g;
 
     const processUrl = (match: string, src: string) => {
-      // Si la URL empieza por http/https o data:image, la dejamos sin cambios
       if (src.startsWith('http') || src.startsWith('https') || src.startsWith('data:image')) {
         return match;
       }
-
-      // Extraer el nombre del archivo de la ruta
       const fileName = src.split('/').pop();
-
-      // Buscar la imagen correspondiente en el array de imágenes
       const imageFile = images.find(img => img.originalName === fileName);
 
       if (imageFile) {
-        // Reemplazar según sea HTML o CSS
         if (isCSS) {
           return match.replace(src, imageFile.preview);
         }
@@ -39,7 +31,6 @@ export function Preview({ files, images }: PreviewProps) {
       return match;
     };
 
-    // Aplicar el reemplazo según el tipo de contenido
     return content.replace(isCSS ? cssRegex : htmlRegex, processUrl);
   };
 
@@ -89,14 +80,11 @@ export function Preview({ files, images }: PreviewProps) {
   return (
     <div className="relative w-full h-full">
       <button
-        className="absolute top-2 left-2 z-10 p-2 backdrop-blur-sm bg-white/20 dark:bg-black/20 text-black dark:text-white border border-gray-500/20 hover:bg-white/30 dark:hover:bg-black/30 rounded-md transition-all duration-200 shadow-sm text-xl font-bold"
+        className="absolute top-2 left-2 z-10 p-2 backdrop-blur-sm bg-white/20 dark:bg-black/20 text-black dark:text-white border border-gray-500/20 hover:bg-white/30 dark:hover:bg-black/30 rounded-md transition-all duration-200 shadow-sm text-lg font-bold"
         onClick={() => document.querySelector('iframe')?.contentWindow?.location.reload()}
       >
         ↻
       </button>
-
-
-
       <iframe
         title="preview"
         srcDoc={combinedContent}
