@@ -22,7 +22,6 @@ export default function App() {
     activeFile,
     handleFileChange,
     setActiveFileId,
-    clearDesign,
     setFiles
   } = useFiles();
 
@@ -174,6 +173,17 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
+  const clearDesign = () => {
+    setCurrentDesign(null);
+    setFiles([
+      { id: '1', name: 'index.html', language: 'html', content: '' },
+      { id: '2', name: 'styles.css', language: 'css', content: '' },
+      { id: '3', name: 'script.js', language: 'javascript', content: '' },
+      { id: '4', name: 'images', language: 'images', content: '', images: [] },
+    ]);
+    setUploadedImages([]);
+    setActiveFileId('1');
+  };
 
 
   return (
