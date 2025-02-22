@@ -1,3 +1,4 @@
+import JSZip from 'jszip';
 import { useState, useEffect } from "react";
 import { Header } from "./components/Header";
 import { FileTabs } from "./components/FileTabs";
@@ -100,18 +101,80 @@ export default function App() {
     setIsCommunityOpen(false);
   };
 
-  const handleDownload = () => {
-    const content = generateDownloadableContent(files);
-    const blob = new Blob([content], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
+  const handleDownload = async () => {
+    const zip = new JSZip();
+
+    const fileToBase64 = async (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    };
+
+    const extractImagePaths = (htmlContent: string, cssContent: string) => {
+      const paths = new Map<string, string>();
+      const htmlRegex = /<img[^>]+src=["']([^"']+)["'][^>]*/g;
+      const cssRegex = /(?:background-image:|background:)[^;]*?url\(['"]?([^'")\s]+)['"]?\)/g;
+
+      // Extraer rutas del HTML
+      let match;
+      while ((match = htmlRegex.exec(htmlContent)) !== null) {
+        const [, src] = match;
+        if (!src.startsWith('http') && !src.startsWith('data:')) {
+          const fileName = src.split('/').pop() || '';
+          paths.set(fileName, src);
+        }
+      }
+
+      // Extraer rutas del CSS
+      while ((match = cssRegex.exec(cssContent)) !== null) {
+        const [, src] = match;
+        if (!src.startsWith('http') && !src.startsWith('data:')) {
+          const fileName = src.split('/').pop() || '';
+          paths.set(fileName, src);
+        }
+      }
+
+      return paths;
+    };
+
+    const { htmlFile, cssFile, page } = generateDownloadableContent(files);
+    const imagePaths = extractImagePaths(htmlFile, cssFile);
+    let modifiedPage = page;
+
+    for (const [fileName, path] of imagePaths) {
+      const image = uploadedImages.find(img => img.originalName === fileName);
+      if (image) {
+        if (fileName.toLowerCase().endsWith('.svg')) {
+          const base64Data = await fileToBase64(image.file);
+          modifiedPage = modifiedPage.replace(
+            new RegExp(`src=["']${path}["']`, 'g'),
+            `src="${base64Data}"`
+          );
+        } else {
+          const folders = path.split('/').slice(0, -1);
+          if (folders.length > 0) {
+            zip.folder(folders.join('/'));
+          }
+          zip.file(path, image.file);
+        }
+      }
+    }
+
+    zip.file("index.html", modifiedPage);
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(content);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "zephyr-design.html";
-    document.body.appendChild(a);
+    a.download = "zephyr-design.zip";
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+
+
 
   return (
     <div className="h-screen bg-gray-900 flex flex-col">

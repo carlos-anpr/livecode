@@ -6,7 +6,10 @@ export const generateDownloadableContent = (files: EditorFile[]) => {
   const jsContent =
     files.find((f) => f.language === 'javascript')?.content || '';
 
-  return `
+  return {
+    htmlFile: htmlContent,
+    cssFile: cssContent,
+    page: `
       <!DOCTYPE html>
       <html>
       <head>
@@ -21,5 +24,6 @@ export const generateDownloadableContent = (files: EditorFile[]) => {
           ${jsContent}
         </script>
       </body>
-      </html>`;
+      </html>`,
+  };
 };
