@@ -10,7 +10,6 @@ import { useSavedDesigns } from "./hooks/useSavedDesigns";
 import { useDesignHandlers } from "./hooks/useDesignHandlers";
 import { useSaveDesign } from "./hooks/useSaveDesign";
 import { generateDownloadableContent } from "./utils/downloadUtils";
-import { INITIAL_SPLIT_SIZES } from "./config/constants";
 import { SavedDesign, ImageFile } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
 import "./styles/split-pane.css";
@@ -37,7 +36,7 @@ export default function App() {
     deleteDesign
   } = useSavedDesigns();
 
-  const [splitSizes, setSplitSizes] = useState(INITIAL_SPLIT_SIZES);
+
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -77,9 +76,6 @@ export default function App() {
     setIsSaveModalOpen
   });
 
-  useEffect(() => {
-    loadSavedDesigns();
-  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -146,8 +142,6 @@ export default function App() {
 
       <EditorSplitPane
         isPreviewMode={isPreviewMode}
-        splitSizes={splitSizes}
-        setSplitSizes={setSplitSizes}
         activeFile={activeFile}
         files={files}
         activeFileId={activeFileId}

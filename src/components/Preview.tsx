@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { EditorFile, ImageFile } from '../types/editor';
 
 interface PreviewProps {
@@ -6,6 +7,22 @@ interface PreviewProps {
 }
 
 export function Preview({ files, images }: PreviewProps) {
+  const [blobUrls, setBlobUrls] = useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    const newBlobUrls = new Map<string, string>();
+    images.forEach(img => {
+      if (img.file) {
+        newBlobUrls.set(img.originalName, URL.createObjectURL(img.file));
+      }
+    });
+    setBlobUrls(newBlobUrls);
+
+    return () => {
+      newBlobUrls.forEach(url => URL.revokeObjectURL(url));
+    };
+  }, [images]);
+
   const htmlFile = files.find((f) => f.language === 'html')?.content || '';
   const cssFile = files.find((f) => f.language === 'css')?.content || '';
   const jsFile = files.find((f) => f.language === 'javascript')?.content || '';
@@ -19,13 +36,13 @@ export function Preview({ files, images }: PreviewProps) {
         return match;
       }
       const fileName = src.split('/').pop();
-      const imageFile = images.find(img => img.originalName === fileName);
+      const blobUrl = blobUrls.get(fileName || '');
 
-      if (imageFile) {
+      if (blobUrl) {
         if (isCSS) {
-          return match.replace(src, imageFile.preview);
+          return match.replace(src, blobUrl);
         }
-        return match.replace(src, imageFile.preview);
+        return match.replace(src, blobUrl);
       }
 
       return match;
@@ -44,14 +61,12 @@ export function Preview({ files, images }: PreviewProps) {
       <head>
         <style>${processedCss}</style>
         <script>
-          // Interceptar todos los clics en enlaces
           document.addEventListener('click', function(e) {
             const anchor = e.target.closest('a');
             if (anchor) {
               e.preventDefault();
               const href = anchor.getAttribute('href');
               
-              // Manejar scroll suave para hashes
               if (href && href.startsWith('#')) {
                 const section = document.querySelector(href);
                 if (section) {
@@ -75,7 +90,6 @@ export function Preview({ files, images }: PreviewProps) {
       </body>
     </html>
   `;
-
 
   return (
     <div className="relative w-full h-full">

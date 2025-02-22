@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
 import { ImageFile } from '../types/editor';
@@ -12,6 +12,15 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
     const [isProcessing, setIsProcessing] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [newName, setNewName] = useState('');
+    const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+    useEffect(() => {
+        const urls = images.map(image => URL.createObjectURL(image.file));
+        setImageUrls(urls);
+        return () => {
+            urls.forEach(url => URL.revokeObjectURL(url));
+        };
+    }, [images]);
 
     const splitNameAndExtension = (filename: string) => {
         const lastDotIndex = filename.lastIndexOf('.');
@@ -32,12 +41,11 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
 
         try {
             const compressedFile = await imageCompression(file, options);
-            const base64 = await encodeFileAsBase64URL(compressedFile);
+            const finalFile = compressedFile.size > file.size ? file : compressedFile;
 
             return {
                 id: crypto.randomUUID(),
-                preview: base64,
-                file: compressedFile,
+                file: finalFile,
                 originalSize: file.size,
                 compressedSize: compressedFile.size,
                 originalName: file.name
@@ -47,6 +55,7 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
             throw error;
         }
     }, []);
+
 
     const deleteImage = async (imageId: string) => {
         const updatedImages = images.filter(img => img.id !== imageId);
@@ -81,9 +90,15 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
         setEditingId(null);
     };
 
+    const MAX_TOTAL_SIZE = 20 * 1024 * 1024;
+
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
-        if (images.length + acceptedFiles.length > 40) {
-            alert('Máximo 40 imágenes permitidas');
+        const totalSize = [...images, ...acceptedFiles].reduce((acc, file) =>
+            acc + (file instanceof File ? file.size : file.compressedSize), 0
+        );
+
+        if (totalSize > MAX_TOTAL_SIZE) {
+            alert('El tamaño total de las imágenes no puede superar los 20MB');
             return;
         }
 
@@ -99,17 +114,18 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
         } finally {
             setIsProcessing(false);
         }
-    }, [images, setImages, compressImage]);
+    }, [images, setImages, compressImage, MAX_TOTAL_SIZE]);
 
-    async function encodeFileAsBase64URL(file: File): Promise<string> {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.addEventListener('loadend', () => {
-                resolve(reader.result as string);
-            });
-            reader.readAsDataURL(file);
-        });
-    }
+
+    // async function encodeFileAsBase64URL(file: File): Promise<string> {
+    //     return new Promise((resolve) => {
+    //         const reader = new FileReader();
+    //         reader.addEventListener('loadend', () => {
+    //             resolve(reader.result as string);
+    //         });
+    //         reader.readAsDataURL(file);
+    //     });
+    // }
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -173,7 +189,7 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
                         gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
                         maxWidth: '100%'
                     }}>
-                    {images.map((image) => (
+                    {images.map((image, index) => (
                         <div
                             key={image.id}
                             className="bg-white p-2 rounded-lg shadow-lg relative group overflow-hidden"
@@ -183,38 +199,75 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
                                 maxWidth: '200px'
                             }}
                         >
-                            <button
-                                onClick={() => {
-                                    deleteImage(image.id).catch(error => {
-                                        console.error('Error al eliminar:', error);
-                                    });
-                                }}
-                                className="absolute top-2 right-2 bg-red-500/80 text-white rounded-full w-6 h-6 
-                                         flex items-center justify-center opacity-0 group-hover:opacity-100 
-                                         transition-all duration-200 z-10 hover:bg-red-500 shadow-lg"
-                                title="Eliminar imagen"
-                            >
-                                <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+
+                            <div className="absolute top-2 right-2 flex space-x-1">
+                                {/* Botón de descarga */}
+                                <button
+                                    onClick={() => {
+                                        const url = imageUrls[index];
+                                        const link = document.createElement('a');
+                                        link.href = url;
+                                        link.download = image.originalName;
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    }}
+                                    className="bg-blue-500/80 text-white rounded-full w-6 h-6 
+                flex items-center justify-center opacity-0 group-hover:opacity-100 
+                transition-all duration-200 z-10 hover:bg-blue-500 shadow-lg"
+                                    title="Descargar imagen"
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                        />
+                                    </svg>
+                                </button>
+
+                                {/* Botón de eliminar existente */}
+                                <button
+                                    onClick={() => {
+                                        deleteImage(image.id).catch(error => {
+                                            console.error('Error al eliminar:', error);
+                                        });
+                                    }}
+                                    className="bg-red-500/80 text-white rounded-full w-6 h-6 
+                flex items-center justify-center opacity-0 group-hover:opacity-100 
+                transition-all duration-200 z-10 hover:bg-red-500 shadow-lg"
+                                    title="Eliminar imagen"
+                                >
+                                    <svg
+                                        className="w-4 h-4"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M6 18L18 6M6 6l12 12"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+
+
                             <div className="w-full relative mb-2" style={{ height: '85px' }}>
                                 <img
-                                    src={image.preview}
-                                    alt="preview"
+                                    src={imageUrls[index]}
+                                    alt={image.originalName}
                                     className="absolute inset-0 w-full h-full object-cover rounded"
                                     onError={(e) => {
-                                        console.error('Error loading image:', image.preview);
+                                        console.error('Error loading image:', image.originalName);
                                         e.currentTarget.src = 'fallback-image-url';
                                     }}
                                 />

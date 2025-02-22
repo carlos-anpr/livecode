@@ -27,7 +27,6 @@ export interface SavedDesign {
 
 export interface ImageFile {
   id: string;
-  preview: string;
   file: File;
   originalSize: number;
   compressedSize: number;

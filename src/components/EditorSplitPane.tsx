@@ -1,13 +1,13 @@
+import { useState } from "react";
 import Split from "react-split";
 import { EditorPane } from "./EditorPane";
 import { PreviewPane } from "./PreviewPane";
 import { ImageTab } from "./ImageTab";
 import { EditorFile, ImageFile } from "../types/editor";
+import { INITIAL_SPLIT_SIZES } from "../config/constants";
 
 interface SplitPaneProps {
     isPreviewMode: boolean;
-    splitSizes: number[];
-    setSplitSizes: (sizes: number[]) => void;
     activeFile: EditorFile;
     files: EditorFile[];
     activeFileId: string;
@@ -18,8 +18,6 @@ interface SplitPaneProps {
 
 export const EditorSplitPane = ({
     isPreviewMode,
-    splitSizes,
-    setSplitSizes,
     activeFile,
     files,
     activeFileId,
@@ -27,6 +25,9 @@ export const EditorSplitPane = ({
     uploadedImages,
     setUploadedImages
 }: SplitPaneProps) => {
+
+    const [splitSizes, setSplitSizes] = useState(INITIAL_SPLIT_SIZES);
+
     return (
         <Split
             className="flex-1 flex"

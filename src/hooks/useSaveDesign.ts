@@ -1,5 +1,10 @@
 import { Dispatch, SetStateAction } from 'react';
-import { EditorFile, SavedDesign, ImageFile } from '../types/editor';
+import {
+  EditorFile,
+  SaveDesignParams,
+  SavedDesign,
+  ImageFile,
+} from '../types/editor';
 import { designsDB } from '../DB/designsDB';
 import { captureScreenshot } from '../utils/screenshotUtils';
 
@@ -11,13 +16,6 @@ type SaveDesignProps = {
   loadSavedDesigns: () => Promise<void>;
   setIsSaving: Dispatch<SetStateAction<boolean>>;
   setIsSaveModalOpen: Dispatch<SetStateAction<boolean>>;
-};
-
-type SaveDesignParams = {
-  name: string;
-  description: string;
-  tags: string[];
-  shareWithCommunity: boolean;
 };
 
 export const useSaveDesign = ({
