@@ -33,3 +33,10 @@ export interface ImageFile {
   compressedSize: number;
   originalName: string;
 }
+
+export interface SaveDesignParams {
+  name: string;
+  description: string;
+  tags: string[];
+  shareWithCommunity: boolean;
+}

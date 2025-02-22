@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { X, Tag as TagIcon, Share2 } from 'lucide-react';
-import { SavedDesign } from '../types/editor'
+import { SavedDesign, SaveDesignParams } from '../types/editor'
 
 interface SaveDesignModalProps {
   currentDesign: SavedDesign | null,
-  onSave: (name: string, description: string, tags: string[], shareWithCommunity: boolean) => void;
+  onSave: (params: SaveDesignParams) => Promise<void>;
   onClose: () => void;
 }
 
@@ -29,7 +29,12 @@ export function SaveDesignModal({ currentDesign, onSave, onClose }: SaveDesignMo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSave(name.trim(), description.trim(), tags, shareWithCommunity);
+      onSave({
+        name: name.trim(),
+        description: description.trim(),
+        tags,
+        shareWithCommunity
+      });
     }
   };
 

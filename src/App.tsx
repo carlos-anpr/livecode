@@ -1,38 +1,47 @@
 import { useState, useEffect } from "react";
-import Split from "react-split";
-import html2canvas from "html2canvas";
-import { EditorPane } from "./components/EditorPane";
-import { PreviewPane } from "./components/PreviewPane";
-import { FileTabs } from "./components/FileTabs";
 import { Header } from "./components/Header";
+import { FileTabs } from "./components/FileTabs";
 import { HistoryPanel } from "./components/HistoryPanel";
 import { SaveDesignModal } from "./components/SaveDesignModal";
-import { CommunityDesignsModal } from './components/CommunityDesignsModal'
-import { EditorFile, SavedDesign, ImageFile } from "./types/editor";
+import { CommunityDesignsModal } from './components/CommunityDesignsModal';
+import { EditorSplitPane } from './components/EditorSplitPane';
+import { useFiles } from "./hooks/useFiles";
+import { useSavedDesigns } from "./hooks/useSavedDesigns";
+import { useDesignHandlers } from "./hooks/useDesignHandlers";
+import { useSaveDesign } from "./hooks/useSaveDesign";
+import { generateDownloadableContent } from "./utils/downloadUtils";
+import { INITIAL_SPLIT_SIZES } from "./config/constants";
+import { SavedDesign, ImageFile } from "./types/editor";
 import { initialFiles } from "./data/initialFiles";
-import { manual } from "./data/manual";
-import { designsDB } from "./DB/designsDB";
-import { ImageTab } from "./components/ImageTab";
 import "./styles/split-pane.css";
 
-const manualFiles: EditorFile[] = [
-  { id: "1", name: "index.html", language: "html", content: manual[0].content },
-  { id: "2", name: "styles.css", language: "css", content: manual[1].content },
-  { id: "3", name: "script.js", language: "javascript", content: manual[2].content },
-  { id: "4", name: "images", language: "images", content: "", images: [] }
-];
-
 export default function App() {
-  const [splitSizes, setSplitSizes] = useState([35, 65]);
-  const [files, setFiles] = useState<EditorFile[]>(manualFiles);
-  const [activeFileId, setActiveFileId] = useState(files[0].id);
+  const {
+    files,
+    activeFileId,
+    activeFile,
+    handleFileChange,
+    setActiveFileId,
+    clearDesign,
+    setFiles
+  } = useFiles();
+
+  const {
+    savedDesigns,
+    currentDesign,
+    setCurrentDesign,
+    isSaving,
+    setIsSaving,
+    loadSavedDesigns,
+    toggleFavorite,
+    deleteDesign
+  } = useSavedDesigns();
+
+  const [splitSizes, setSplitSizes] = useState(INITIAL_SPLIT_SIZES);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
-  const [savedDesigns, setSavedDesigns] = useState<SavedDesign[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isCommunityOpen, setIsCommunityOpen] = useState(false);
-  const [currentDesign, setCurrentDesign] = useState<SavedDesign | null>(null);
   const [uploadedImages, setUploadedImages] = useState<ImageFile[]>([]);
   const [communityDesigns, setCommunityDesigns] = useState<SavedDesign[]>(
     initialFiles.map((design) => ({
@@ -51,235 +60,26 @@ export default function App() {
     }))
   );
 
-  const activeFile = files.find((f) => f.id === activeFileId)!;
+  const { handleSelectDesign } = useDesignHandlers({
+    setFiles,
+    setCurrentDesign,
+    setUploadedImages,
+    setIsHistoryOpen
+  });
+
+  const { handleSaveDesign } = useSaveDesign({
+    files,
+    currentDesign,
+    uploadedImages,
+    setCommunityDesigns,
+    loadSavedDesigns,
+    setIsSaving,
+    setIsSaveModalOpen
+  });
 
   useEffect(() => {
     loadSavedDesigns();
   }, []);
-
-  const loadSavedDesigns = async () => {
-    try {
-      const designs = await designsDB.getAllDesigns();
-      setSavedDesigns(designs);
-    } catch (error) {
-      console.error('Error loading designs:', error);
-    }
-  };
-
-  const handleTogglePreview = () => {
-    setIsPreviewMode(!isPreviewMode);
-  };
-
-  const handleSelectCommunityDesign = (design: SavedDesign) => {
-    setCurrentDesign(design);
-    setUploadedImages(design.images ?? [])
-    handleSelectDesign(design);
-    setIsCommunityOpen(false);
-  };
-
-  const handleFileChange = (content: string) => {
-    setFiles(files.map((f) =>
-      f.id === activeFileId ? { ...f, content } : f
-    ));
-  };
-
-  const handleClearDesign = () => {
-    setCurrentDesign(null)
-    setUploadedImages([])
-    setFiles([
-      { id: "1", name: "index.html", language: "html", content: "" },
-      { id: "2", name: "styles.css", language: "css", content: "" },
-      { id: "3", name: "script.js", language: "javascript", content: "" },
-      { id: "4", name: "images", language: "images", content: "", images: [] }
-    ]);
-  };
-
-  const captureScreenshot = async () => {
-    const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-9999px";
-    container.style.width = "800px";
-    container.style.height = "600px";
-    container.style.backgroundColor = "#ffffff";
-
-    const htmlContent = files.find((f) => f.language === "html")?.content || "";
-    const cssContent = files.find((f) => f.language === "css")?.content || "";
-
-    const cssSafe = cssContent
-      .split('\n')
-      .filter(line => !line.match('linear-gradient.*to right'))
-      .join('\n');
-
-
-    container.innerHTML = `
-      <html>
-        <head>
-          <style>${cssSafe}</style>
-        </head>
-        <body>
-          ${htmlContent}
-        </body>
-      </html>
-    `;
-    document.body.appendChild(container);
-
-    try {
-      const canvas = await html2canvas(container, {
-        width: 800,
-        height: 600,
-        scale: 1,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-
-      });
-
-      const screenshot = canvas.toDataURL("image/png", 1.0);
-      document.body.removeChild(container);
-      return screenshot;
-    } catch (error) {
-      console.error("Error capturing screenshot:", error);
-      document.body.removeChild(container);
-      return null;
-    }
-  };
-
-  const handleSaveDesign = async (
-    name: string,
-    description: string,
-    tags: string[],
-    shareWithCommunity: boolean
-  ) => {
-    setIsSaving(true);
-    try {
-      const htmlFile = files.find((f) => f.language === "html")?.content || "";
-      const cssFile = files.find((f) => f.language === "css")?.content || "";
-      const jsFile = files.find((f) => f.language === "javascript")?.content || "";
-
-      setIsSaveModalOpen(false);
-
-      const screenshot = await captureScreenshot();
-
-      const designData = {
-        id: currentDesign?.id || crypto.randomUUID(),
-        name,
-        description,
-        html: htmlFile,
-        css: cssFile,
-        javascript: jsFile,
-        images: uploadedImages,
-        updated_at: new Date().toISOString(),
-        favorite: currentDesign?.favorite || false,
-        tags,
-        screenshot,
-        shareWithCommunity
-      };
-
-      const existingDesignLocal = await designsDB.getDesignById(designData.id);
-
-      if (existingDesignLocal) {
-        await designsDB.updateDesign(designData?.id, {
-          ...designData,
-          created_at: currentDesign?.created_at
-        });
-
-        if (shareWithCommunity) {
-          setCommunityDesigns(prevDesigns => {
-            const designExistsCommunity = prevDesigns.some(design => design.id === currentDesign?.id);
-
-            if (designExistsCommunity) {
-              return prevDesigns.map(design =>
-                design.id === currentDesign?.id
-                  ? {
-                    ...design,
-                    ...designData,
-                    created_at: currentDesign.created_at
-                  }
-                  : design
-              );
-            } else {
-              return [{
-                ...designData,
-                created_at: new Date().toISOString()
-              }, ...prevDesigns];
-            }
-          });
-        }
-      } else {
-        const newDesign = {
-          ...designData,
-          created_at: new Date().toISOString()
-        };
-
-        await designsDB.saveDesign(newDesign);
-
-        if (shareWithCommunity) {
-          setCommunityDesigns(prevDesigns => {
-            const designExistsCommunity = prevDesigns.some(design => design.id === currentDesign?.id);
-
-            if (designExistsCommunity) {
-              return prevDesigns.map(design =>
-                design.id === currentDesign?.id
-                  ? {
-                    ...design,
-                    ...designData,
-                    created_at: currentDesign.created_at
-                  }
-                  : design
-              );
-            } else {
-              return [{
-                ...designData,
-                created_at: new Date().toISOString()
-              }, ...prevDesigns];
-            }
-          });
-        }
-      }
-
-      await loadSavedDesigns();
-
-    } catch (error) {
-      console.error("Error saving design:", error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleSelectDesign = (design: SavedDesign) => {
-    setCurrentDesign(design)
-    setUploadedImages(design.images ?? [])
-    setFiles([
-      { id: "1", name: "index.html", language: "html", content: design.html },
-      { id: "2", name: "styles.css", language: "css", content: design.css },
-      { id: "3", name: "script.js", language: "javascript", content: design.javascript },
-      { id: '4', name: 'images', language: 'images', content: '', images: design.images ?? [] },
-    ]);
-    setIsHistoryOpen(false);
-  };
-
-  const handleToggleFavorite = async (id: string) => {
-    try {
-      const design = savedDesigns.find(d => d.id === id);
-      if (design) {
-        const updatedDesign = { ...design, favorite: !design.favorite };
-        await designsDB.updateDesign(id, updatedDesign);
-        await loadSavedDesigns();
-      }
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-    }
-  };
-
-  const handleDeleteDesign = async (id: string) => {
-    try {
-      setCurrentDesign(null)
-      await designsDB.deleteDesign(id);
-      await loadSavedDesigns();
-    } catch (error) {
-      console.error("Error deleting design:", error);
-    }
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -293,30 +93,20 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const handleTogglePreview = () => {
+    setIsPreviewMode(!isPreviewMode);
+  };
+
+  const handleSelectCommunityDesign = (design: SavedDesign) => {
+    setCurrentDesign(design);
+    setUploadedImages(design.images ?? []);
+    handleSelectDesign(design);
+    setIsCommunityOpen(false);
+  };
 
   const handleDownload = () => {
-    const htmlContent = files.find((f) => f.language === "html")?.content || "";
-    const cssContent = files.find((f) => f.language === "css")?.content || "";
-    const jsContent = files.find((f) => f.language === "javascript")?.content || "";
-
-    const fullContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            ${cssContent}
-          </style>
-        </head>
-        <body>
-          ${htmlContent}
-          <script>
-            ${jsContent}
-          </script>
-        </body>
-        </html>`;
-
-    const blob = new Blob([fullContent], { type: "text/html" });
+    const content = generateDownloadableContent(files);
+    const blob = new Blob([content], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -326,9 +116,6 @@ export default function App() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
-
-
-
 
   return (
     <div className="h-screen bg-gray-900 flex flex-col">
@@ -340,7 +127,7 @@ export default function App() {
         isHistoryOpen={isHistoryOpen}
         isPreviewMode={isPreviewMode}
         onDownload={handleDownload}
-        onClear={handleClearDesign}
+        onClear={clearDesign}
         isSaving={isSaving}
       />
 
@@ -357,42 +144,23 @@ export default function App() {
         onFileSelect={setActiveFileId}
       />
 
-      <Split
-        className="flex-1 flex"
-        sizes={isPreviewMode ? [0, 100] : splitSizes}
-        minSize={isPreviewMode ? [0, 100] : [300, 300]}
-        maxSize={isPreviewMode ? [0, Infinity] : [960, Infinity]}
-        expandToMin={false}
-        gutterSize={isPreviewMode ? 0 : 6}
-        gutterAlign="center"
-        snapOffset={30}
-        dragInterval={1}
-        direction="horizontal"
-        cursor="col-resize"
-        onDragEnd={(newSizes) => setSplitSizes(newSizes)}
-      >
-        <div className="editor-container">
-          {activeFile.language === 'images' ? (
-            <ImageTab
-              images={uploadedImages}
-              setImages={setUploadedImages}
-            />
-          ) : (
-            <EditorPane
-              files={files}
-              activeFileId={activeFileId}
-              onChange={(content) => handleFileChange(content)}
-            />
-          )}
-        </div>
-        <PreviewPane files={files} images={uploadedImages} />
-      </Split>
+      <EditorSplitPane
+        isPreviewMode={isPreviewMode}
+        splitSizes={splitSizes}
+        setSplitSizes={setSplitSizes}
+        activeFile={activeFile}
+        files={files}
+        activeFileId={activeFileId}
+        handleFileChange={handleFileChange}
+        uploadedImages={uploadedImages}
+        setUploadedImages={setUploadedImages}
+      />
 
       <HistoryPanel
         designs={savedDesigns}
         onSelect={handleSelectDesign}
-        onToggleFavorite={handleToggleFavorite}
-        onDelete={handleDeleteDesign}
+        onToggleFavorite={toggleFavorite}
+        onDelete={deleteDesign}
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
       />
