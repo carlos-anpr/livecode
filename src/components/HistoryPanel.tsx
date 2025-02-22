@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import { Star, Clock, Tag, Trash2, X } from 'lucide-react';
 import { SavedDesign } from '../types/editor';
 
@@ -20,17 +20,34 @@ export function HistoryPanel({
   onClose
 }: HistoryPanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const sortedDesigns = useMemo(() => {
-    return [...designs].sort((a, b) => {
-      // Primero ordena por favoritos
-      if (a.favorite && !b.favorite) return -1;
-      if (!a.favorite && b.favorite) return 1;
+  const filteredAndSortedDesigns = useMemo(() => {
+    const normalizedQuery = searchQuery.toLowerCase().trim();
 
-      // Si tienen el mismo estado de favorito, ordena por fecha
-      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-    });
-  }, [designs]);
+    return [...designs]
+      .sort((a, b) => {
+        // Primero ordena por favoritos
+        if (a.favorite && !b.favorite) return -1;
+        if (!a.favorite && b.favorite) return 1;
+
+        // Si tienen el mismo estado de favorito, ordena por fecha
+        return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+      })
+      .filter((design) => {
+        if (!normalizedQuery) return true;
+
+        // Buscar en el nombre
+        const nameMatch = design.name.toLowerCase().includes(normalizedQuery);
+
+        // Buscar en los tags
+        const tagMatch = design.tags.some(tag =>
+          tag.toLowerCase().includes(normalizedQuery)
+        );
+
+        return nameMatch || tagMatch;
+      });
+  }, [designs, searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -70,79 +87,87 @@ export function HistoryPanel({
           <div className="mb-6">
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search designs..."
               className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-md text-white focus:outline-none focus:border-blue-500"
             />
           </div>
 
           <div className="space-y-4">
-            {sortedDesigns.map((design) => (
-              <div
-                key={design.id}
-                className="relative bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors cursor-pointer group"
-                onClick={() => onSelect(design)}
-              >
-                <div className="relative mb-3 rounded-md overflow-hidden bg-gray-700 aspect-video">
-                  {design.screenshot ? (
-                    <img
-                      src={design.screenshot}
-                      alt={design.name}
-                      className="w-full h-full object-cover"
-                      style={{ zIndex: 1 }}
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                      No preview available
+            {filteredAndSortedDesigns.length > 0 ? (
+              filteredAndSortedDesigns.map((design) => (
+                <div
+                  key={design.id}
+                  className="relative bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition-colors cursor-pointer group"
+                  onClick={() => onSelect(design)}
+                >
+                  <div className="relative mb-3 rounded-md overflow-hidden bg-gray-700 aspect-video">
+                    {design.screenshot ? (
+                      <img
+                        src={design.screenshot}
+                        alt={design.name}
+                        className="w-full h-full object-cover"
+                        style={{ zIndex: 1 }}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                        No preview available
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200" />
+                  </div>
+
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-white font-medium">{design.name}</h3>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onToggleFavorite(design.id);
+                        }}
+                        className={`p-1.5 rounded-full hover:bg-gray-700 transition-colors ${design.favorite ? 'text-yellow-400' : 'text-gray-400'
+                          }`}
+                      >
+                        <Star size={16} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(design.id);
+                        }}
+                        className="p-1.5 rounded-full hover:bg-gray-700 transition-colors text-gray-400 hover:text-red-400"
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </div>
-                  )}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200" />
-                </div>
-
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-white font-medium">{design.name}</h3>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorite(design.id);
-                      }}
-                      className={`p-1.5 rounded-full hover:bg-gray-700 transition-colors ${design.favorite ? 'text-yellow-400' : 'text-gray-400'
-                        }`}
-                    >
-                      <Star size={16} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(design.id);
-                      }}
-                      className="p-1.5 rounded-full hover:bg-gray-700 transition-colors text-gray-400 hover:text-red-400"
-                    >
-                      <Trash2 size={16} />
-                    </button>
                   </div>
-                </div>
 
-                <div className="flex items-center space-x-4 text-sm text-gray-400">
-                  <div className="flex items-center">
-                    <Clock size={14} className="mr-1" />
-                    {new Date(design.updated_at).toLocaleDateString()}
-                  </div>
-                  {design.tags.length > 0 && (
+                  <div className="flex items-center space-x-4 text-sm text-gray-400">
                     <div className="flex items-center">
-                      <Tag size={14} className="mr-1" />
-                      {design.tags.join(', ')}
+                      <Clock size={14} className="mr-1" />
+                      {new Date(design.updated_at).toLocaleDateString()}
                     </div>
+                    {design.tags.length > 0 && (
+                      <div className="flex items-center">
+                        <Tag size={14} className="mr-1" />
+                        {design.tags.join(', ')}
+                      </div>
+                    )}
+                  </div>
+
+                  {design.description && (
+                    <p className="mt-2 text-sm text-gray-400 line-clamp-2">
+                      {design.description}
+                    </p>
                   )}
                 </div>
-
-                {design.description && (
-                  <p className="mt-2 text-sm text-gray-400 line-clamp-2">
-                    {design.description}
-                  </p>
-                )}
+              ))
+            ) : (
+              <div className="text-center text-gray-400 py-8">
+                No designs found matching your search
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

@@ -10,6 +10,17 @@ interface ImageTabProps {
 
 export function ImageTab({ images, setImages }: ImageTabProps) {
     const [isProcessing, setIsProcessing] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [newName, setNewName] = useState('');
+
+    const splitNameAndExtension = (filename: string) => {
+        const lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex === -1) return [filename, ''];
+        return [
+            filename.substring(0, lastDotIndex),
+            filename.substring(lastDotIndex)
+        ];
+    };
 
     const compressImage = useCallback(async (file: File) => {
         const options = {
@@ -22,7 +33,6 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
         try {
             const compressedFile = await imageCompression(file, options);
             const base64 = await encodeFileAsBase64URL(compressedFile);
-            console.log(base64.substring(0, 100));
 
             return {
                 id: crypto.randomUUID(),
@@ -41,6 +51,34 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
     const deleteImage = async (imageId: string) => {
         const updatedImages = images.filter(img => img.id !== imageId);
         setImages(updatedImages);
+    };
+
+    const handleRename = (imageId: string, newName: string) => {
+        if (!newName.trim()) {
+            setEditingId(null);
+            return;
+        }
+
+        const image = images.find(img => img.id === imageId);
+        if (!image) return;
+
+        const [, originalExtension] = splitNameAndExtension(image.originalName);
+        const [newNameWithoutExt] = splitNameAndExtension(newName);
+
+        const finalName = `${newNameWithoutExt}${originalExtension}`;
+
+        const updatedImages = images.map(img => {
+            if (img.id === imageId) {
+                return {
+                    ...img,
+                    originalName: finalName
+                };
+            }
+            return img;
+        });
+
+        setImages(updatedImages);
+        setEditingId(null);
     };
 
     const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -81,6 +119,7 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
         maxSize: 2 * 1024 * 1024,
         maxFiles: 40
     });
+
     return (
         <div className="flex flex-col h-full bg-gray-900">
             <div
@@ -186,9 +225,55 @@ export function ImageTab({ images, setImages }: ImageTabProps) {
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[11px] text-gray-600 truncate font-medium">
-                                    {image.originalName}
-                                </p>
+                                {editingId === image.id ? (
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            handleRename(image.id, newName);
+                                        }}
+                                        className="flex items-center space-x-1"
+                                    >
+                                        <div className="flex-1">
+                                            <input
+                                                type="text"
+                                                value={newName}
+                                                onChange={(e) => setNewName(e.target.value)}
+                                                className="w-full px-1 py-0.5 text-[11px] text-gray-800 border rounded"
+                                                autoFocus
+                                                onFocus={(e) => {
+                                                    const [nameWithoutExt] = splitNameAndExtension(image.originalName);
+                                                    setNewName(nameWithoutExt);
+                                                    e.target.selectionStart = nameWithoutExt.length;
+                                                }}
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            className="text-green-500 hover:text-green-600"
+                                            disabled={!newName.trim()}
+                                        >
+                                            ✓
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setEditingId(null)}
+                                            className="text-red-500 hover:text-red-600"
+                                        >
+                                            ✗
+                                        </button>
+                                    </form>
+                                ) : (
+                                    <p
+                                        className="text-[11px] text-gray-600 truncate font-medium cursor-pointer hover:text-blue-600"
+                                        onClick={() => {
+                                            setEditingId(image.id);
+                                            const [nameWithoutExt] = splitNameAndExtension(image.originalName);
+                                            setNewName(nameWithoutExt);
+                                        }}
+                                    >
+                                        {image.originalName}
+                                    </p>
+                                )}
                                 <div className="text-xs font-medium">
                                     <p className="flex justify-between items-center">
                                         <span className="text-gray-600">Orig:</span>
