@@ -122,8 +122,9 @@ export default function App() {
       while ((match = htmlRegex.exec(htmlContent)) !== null) {
         const [, src] = match;
         if (!src.startsWith('http') && !src.startsWith('data:')) {
-          const fileName = src.split('/').pop() || '';
-          paths.set(fileName, src);
+          const cleanedSrc = src.replace(/^\.\//, '');
+          const fileName = cleanedSrc.split('/').pop() || '';
+          paths.set(fileName, cleanedSrc);
         }
       }
 
@@ -131,8 +132,9 @@ export default function App() {
       while ((match = cssRegex.exec(cssContent)) !== null) {
         const [, src] = match;
         if (!src.startsWith('http') && !src.startsWith('data:')) {
-          const fileName = src.split('/').pop() || '';
-          paths.set(fileName, src);
+          const cleanedSrc = src.replace(/^\.\//, '');
+          const fileName = cleanedSrc.split('/').pop() || '';
+          paths.set(fileName, cleanedSrc);
         }
       }
 
@@ -142,16 +144,37 @@ export default function App() {
     const { htmlFile, cssFile, page } = generateDownloadableContent(files);
     const imagePaths = extractImagePaths(htmlFile, cssFile);
     let modifiedPage = page;
+    const htmlRegex = /<img[^>]+src=["']([^"']+)["'][^>]*/g; //Need this again for the original src
+    const cssRegex = /(?:background-image:|background:)[^;]*?url\(['"]?([^'")\s]+)['"]?\)/g;//Need this again for the original src
+
+    // Reprocess HTML to get original src values
+    const htmlMatches = [];
+    let match;
+    while ((match = htmlRegex.exec(htmlFile)) !== null) {
+      htmlMatches.push(match);
+    }
+    const cssMatches = [];
+    while ((match = cssRegex.exec(cssFile)) !== null) {
+      cssMatches.push(match);
+    }
+
 
     for (const [fileName, path] of imagePaths) {
       const image = uploadedImages.find(img => img.originalName === fileName);
+
       if (image) {
         if (fileName.toLowerCase().endsWith('.svg')) {
           const base64Data = await fileToBase64(image.file);
-          modifiedPage = modifiedPage.replace(
-            new RegExp(`src=["']${path}["']`, 'g'),
-            `src="${base64Data}"`
-          );
+          // Find the original src
+          const originalSrcMatch = htmlMatches.find(m => m[1].replace(/^\.\//, '') === path) || cssMatches.find(m => m[1].replace(/^\.\//, '') === path);
+          if (originalSrcMatch) {
+            const originalSrc = originalSrcMatch[1];
+            modifiedPage = modifiedPage.replace(
+              new RegExp(`src=["']${originalSrc}["']`, 'g'),
+              `src="${base64Data}"`
+            );
+          }
+
         } else {
           const folders = path.split('/').slice(0, -1);
           if (folders.length > 0) {
