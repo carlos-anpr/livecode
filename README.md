@@ -64,5 +64,7 @@ descargas en ZIP (JSZip) y capturas con HTML2Canvas.
 | Fitness Point · Gimnasio | Web de gimnasio | Basado en el tutorial de [WebDesignMastery](https://github.com/WebDesignMastery/Fitness_Point_28-09-24) ([canal](https://www.youtube.com/@WebDesignMastery)) |
 
 Los diseños de terceros se incluyen con fines educativos, con sus avisos de
-copyright originales intactos. Las fotografías son de bancos de imágenes libres
-(estilo Unsplash). El código de la aplicación Zephyr es de mi autoría.
+copyright originales intactos (detalle completo en `CREDITS.md`). Las
+fotografías son de bancos de imágenes libres (estilo Unsplash). El código de
+la aplicación Zephyr es de mi autoría y se distribuye bajo licencia MIT
+(ver `LICENSE`; los diseños de terceros quedan fuera de esa licencia).
