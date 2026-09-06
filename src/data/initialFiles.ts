@@ -848,6 +848,846 @@ const JS2 = `
 	});
 `;
 
+const contentHTML3 = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+    />
+    <title>Web Design Mastery | Eightyeight</title>
+  </head>
+  <body>
+    <div class="background">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <nav>
+      <div class="nav__header">
+        <div class="nav__logo">
+          <a href="#">
+            <img src="/designs/eightyeight/assets/logo.png" alt="logo" />
+          </a>
+        </div>
+        <div class="nav__menu__btn" id="menu-btn">
+          <i class="ri-menu-4-line"></i>
+        </div>
+      </div>
+      <ul class="nav__links" id="nav-links">
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#gallery">GALLERY</a></li>
+        <li><a href="#about">ABOUT US</a></li>
+        <li><a href="#contact">CONTACT US</a></li>
+      </ul>
+    </nav>
+
+    <header id="home">
+      <div class="section__container header__container">
+        <h1 class="section__header">Find Your Perfect Ride Today</h1>
+      </div>
+    </header>
+
+    <section class="section__container gallery__container" id="gallery">
+      <p class="section__subheader">EIGHTYEIGHT DETAILING</p>
+      <h2 class="section__header">OUR GALLERY</h2>
+      <!-- Slider main container -->
+      <div class="swiper">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+          <!-- Slides -->
+          <div class="swiper-slide">
+            <img src="/designs/eightyeight/assets/gallery-1.jpg" alt="gallery" />
+          </div>
+          <div class="swiper-slide">
+            <img src="/designs/eightyeight/assets/gallery-2.jpg" alt="gallery" />
+          </div>
+          <div class="swiper-slide">
+            <img src="/designs/eightyeight/assets/gallery-3.jpg" alt="gallery" />
+          </div>
+          <div class="swiper-slide">
+            <img src="/designs/eightyeight/assets/gallery-4.jpg" alt="gallery" />
+          </div>
+          <div class="swiper-slide">
+            <img src="/designs/eightyeight/assets/gallery-5.jpg" alt="gallery" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section__container service__container" id="about">
+      <p class="section__subheader">KNOW US BETTER</p>
+      <h2 class="section__header">
+        A BRAND NEW AUTOMATIVE CULTURE IS UNFOLDING
+      </h2>
+      <div class="service__content">
+        <div class="service__row">
+          <div class="service__img">
+            <img src="/designs/eightyeight/assets/service-1.jpg" alt="service" />
+          </div>
+          <div class="service__details">
+            <h4>PREMIUM CAR DETAILING</h4>
+            <p>
+              Experience meticulous care with our premium detailing services
+              that enhance every curve and surface of your vehicle.
+            </p>
+          </div>
+        </div>
+        <div class="service__row">
+          <div class="service__img">
+            <img src="/designs/eightyeight/assets/service-2.jpg" alt="service" />
+          </div>
+          <div class="service__details">
+            <h4>PREMIUM CAR STORAGE</h4>
+            <p>
+              Keep your prized possession safe with our secure,
+              climate-controlled car storage facilities.
+            </p>
+          </div>
+        </div>
+        <div class="service__row">
+          <div class="service__img">
+            <img src="/designs/eightyeight/assets/service-3.jpg" alt="service" />
+          </div>
+          <div class="service__details">
+            <h4>PRIVATE EVENTS</h4>
+            <p>
+              From luxury showcases to networking experiences, we create
+              unforgettable moments centered around cars.
+            </p>
+          </div>
+        </div>
+        <div class="service__row">
+          <div class="service__img">
+            <img src="/designs/eightyeight/assets/service-4.jpg" alt="service" />
+          </div>
+          <div class="service__details">
+            <h4>PAINT PROTECTION FILM</h4>
+            <p>
+              This invisible layer defends against scratches, stone chips, and
+              environmental damage, preserving your car for years.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="service__btn">
+        <button class="btn">VIEW ALL SERVICES</button>
+      </div>
+    </section>
+
+    <section class="section__container instagram__container">
+      <p class="section__subheader">FOLLOW US ON</p>
+      <h2 class="section__header">INSTAGRAM</h2>
+      <div class="instagram__wrapper">
+        <div class="instagram__images">
+          <img src="/designs/eightyeight/assets/instagram-1.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-2.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-3.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-4.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-5.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-6.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-7.jpg" alt="instagram" />
+          <img src="/designs/eightyeight/assets/instagram-8.jpg" alt="instagram" />
+        </div>
+      </div>
+    </section>
+
+    <section class="banner">
+      <div class="section__container banner__container">
+        <p class="section__subheader">AUTOMOTIVE HUB FOR ENTHUSIASTS</p>
+        <h2 class="section__header">INDIA'S LARGEST CAR CARE FACILITY</h2>
+      </div>
+    </section>
+
+    <footer>
+      <div class="section__container footer__container" id="contact">
+        <div class="footer__col">
+          <a href="#" class="footer__logo">
+            <img src="/designs/eightyeight/assets/logo.png" alt="logo" />
+          </a>
+          <p class="section__description">
+            We offer a wide range of new and used cars with the best deals and
+            trusted service.
+          </p>
+          <ul class="footer__socials">
+            <li>
+              <a href="#"><i class="ri-facebook-circle-fill"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="ri-instagram-line"></i></a>
+            </li>
+            <li>
+              <a href="#"><i class="ri-youtube-fill"></i></a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>QUICK LINKS</h4>
+          <ul class="footer__links">
+            <li><a href="#">HOME</a></li>
+            <li><a href="#">ABOUT US</a></li>
+            <li><a href="#">SERVICES</a></li>
+            <li><a href="#">GALLERY</a></li>
+            <li><a href="#">CONTACT US</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>SERVICES</h4>
+          <ul class="footer__links">
+            <li><a href="#">CAR DETAILING</a></li>
+            <li><a href="#">PAINT CORRECTION</a></li>
+            <li><a href="#">PAINT PROTECTION FILM</a></li>
+            <li><a href="#">CERAMIC COATING</a></li>
+            <li><a href="#">CAR STORAGE</a></li>
+            <li><a href="#">PRIVATE EVENTS</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>SIGNUP FOR NEWSLETTER</h4>
+          <form action="/">
+            <input type="text" placeholder="ENTER EMAIL" />
+            <button class="btn">
+              <i class="ri-send-plane-2-fill"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="footer__bar">
+        Copyright © 2025 Web Design Mastery. All rights reserved.
+      </div>
+    </footer>
+
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+  </body>
+</html>
+`;
+
+const contentCSS3 = `@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+:root {
+  --primary-color: #e81f23;
+  --background-color: #0c0a0b;
+  --text-light: #767268;
+  --extra-light: #f3f4f6;
+  --white: #ffffff;
+  --max-width: 1200px;
+  --header-font: "Orbitron", sans-serif;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.section__container {
+  max-width: var(--max-width);
+  margin: auto;
+  padding: 5rem 1rem;
+}
+
+.section__subheader {
+  max-width: 800px;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 5px;
+  text-align: center;
+}
+
+.section__header {
+  max-width: 800px;
+  margin-inline: auto;
+  font-size: 3rem;
+  color: var(--white);
+  font-family: var(--header-font);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.section__description {
+  color: var(--white);
+  line-height: 1.75rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  outline: none;
+  border: none;
+  color: var(--white);
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+img {
+  display: flex;
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+ul {
+  list-style: none;
+}
+
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
+  font-family: "Roboto", sans-serif;
+  background-color: var(--background-color);
+}
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: 100%;
+  max-width: var(--max-width);
+  display: flex;
+  justify-content: space-between;
+  z-index: -99;
+}
+
+.background span {
+  width: 2px;
+  height: 100%;
+  background-color: var(--text-light);
+  opacity: 0.1;
+}
+
+nav {
+  position: fixed;
+  isolation: isolate;
+  width: 100%;
+  z-index: 9;
+}
+
+.nav__header {
+  padding: 0.5rem 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+}
+
+.nav__logo a img {
+  max-width: 150px;
+}
+
+.nav__menu__btn {
+  font-size: 1.5rem;
+  color: var(--white);
+  cursor: pointer;
+}
+
+.nav__links {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: var(--primary-color);
+  transition: transform 0.5s;
+  z-index: -1;
+}
+
+.nav__links.open {
+  transform: translateY(100%);
+}
+
+.nav__links a {
+  font-weight: 500;
+  color: var(--white);
+  white-space: nowrap;
+  letter-spacing: 2px;
+}
+
+header {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+
+  background-image: url("/designs/eightyeight/assets/header.jpg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+header::before {
+  position: absolute;
+  content: "";
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    var(--background-color),
+    rgba(0, 0, 0, 0),
+    var(--background-color)
+  );
+  z-index: -1;
+}
+
+.header__container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gallery__container {
+  max-width: 1500px;
+}
+
+.swiper {
+  margin-top: 4rem;
+  width: 100%;
+}
+
+.swiper-slide {
+  max-width: 45rem;
+}
+
+.service__content {
+  margin-block: 4rem;
+  display: grid;
+  gap: 4rem;
+}
+
+.service__img {
+  margin-inline: auto;
+  height: 20rem;
+  overflow: hidden;
+}
+
+.service__img img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.service__details {
+  max-width: 400px;
+  margin-inline: auto;
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.service__details h4 {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-family: var(--header-font);
+  font-weight: 600;
+  color: var(--white);
+}
+
+.service__details p {
+  line-height: 1.75rem;
+  color: var(--extra-light);
+}
+
+.service__btn {
+  text-align: center;
+}
+
+.instagram__container {
+  max-width: 1500px;
+}
+
+.instagram__wrapper {
+  overflow: hidden;
+  margin-top: 4rem;
+}
+
+.instagram__images {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  animation: scroll-left 30s linear infinite;
+}
+
+@keyframes scroll-left {
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+.instagram__images img {
+  max-width: 200px;
+}
+
+.banner {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+
+  background-image: url("/designs/eightyeight/assets/banner.jpg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.banner::before {
+  position: absolute;
+  content: "";
+  height: 50%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to bottom,
+    var(--background-color),
+    rgba(0, 0, 0, 0)
+  );
+  z-index: -1;
+}
+
+.footer__container {
+  display: grid;
+  gap: 4rem 2rem;
+}
+
+.footer__logo {
+  display: inline-flex;
+  margin-bottom: 2rem;
+}
+
+.footer__logo img {
+  max-width: 200px;
+}
+
+.footer__socials {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer__socials a {
+  display: inline-flex;
+  padding: 5px 6px;
+  font-size: 1.5rem;
+  color: var(--white);
+  border: 2px solid var(--white);
+  border-radius: 100%;
+}
+
+.footer__socials a:hover {
+  border-color: var(--primary-color);
+}
+
+.footer__col h4 {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-light);
+  letter-spacing: 2px;
+}
+
+.footer__links {
+  display: grid;
+  gap: 2rem;
+}
+
+.footer__links a {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 2px;
+}
+
+.footer__links a:hover {
+  color: var(--primary-color);
+}
+
+.footer__col form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--primary-color);
+}
+
+.footer__col input {
+  flex: 1;
+  padding-inline: 1rem;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--white);
+  background-color: transparent;
+}
+
+.footer__col input::placeholder {
+  color: var(--white);
+}
+
+.footer__col form .btn {
+  padding: 0.75rem;
+  border: none;
+  font-size: 1.25rem;
+}
+
+.footer__col form .btn:hover {
+  color: var(--primary-color);
+}
+
+.footer__bar {
+  padding: 1.5rem 1rem;
+  font-size: 1rem;
+  color: var(--white);
+  text-align: center;
+  background-color: #1f1b1c;
+}
+
+@media (width > 540px) {
+  .header__container .section__header {
+    font-size: 4rem;
+  }
+
+  .footer__container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (width > 768px) {
+  nav {
+    position: static;
+    padding: 2rem 1rem 1rem;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav__header {
+    padding: 0;
+    background-color: transparent;
+  }
+
+  .nav__logo a img {
+    max-width: 200px;
+  }
+
+  .nav__menu__btn {
+    display: none;
+  }
+
+  .nav__links {
+    position: static;
+    width: fit-content;
+    padding: 0;
+    flex-direction: row;
+    background-color: transparent;
+    transform: none !important;
+  }
+
+  .nav__links a {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .nav__links a::after {
+    position: absolute;
+    content: "\`\`\`\`";
+    font-size: 1.75rem;
+    bottom: calc(-100% - 1rem);
+    left: 0;
+    color: var(--background-color);
+    transition: 0.3s;
+  }
+
+  .nav__links a:hover {
+    color: var(--primary-color);
+  }
+
+  .nav__links a:hover::after {
+    color: var(--primary-color);
+  }
+
+  .header__container {
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .header__container .section__header {
+    margin: 0;
+    text-align: left;
+    font-size: 5rem;
+  }
+
+  .service__container :is(.section__header, .section__subheader) {
+    text-align: left;
+  }
+
+  .service__row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .service__row:nth-child(1) .service__img {
+    aspect-ratio: 1;
+    margin-inline: unset;
+    margin-inline-start: auto;
+  }
+
+  .service__row:nth-child(2) .service__img {
+    order: 1;
+    width: 100%;
+  }
+
+  .service__row:nth-child(3) .service__img {
+    width: 100%;
+  }
+
+  .service__row:nth-child(4) .service__img {
+    order: 1;
+    aspect-ratio: 1;
+    margin-inline: unset;
+    margin-inline-end: auto;
+  }
+
+  .service__details {
+    margin-inline: unset;
+    text-align: left;
+  }
+
+  .service__row:nth-child(2n-1) .service__details {
+    padding-left: 4rem;
+  }
+
+  .service__row:nth-child(2n) .service__details {
+    margin-inline-start: auto;
+    padding-right: 4rem;
+  }
+
+  .footer__container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+`;
+
+const contentJS3 = `const menuBtn = document.getElementById("menu-btn");
+const navLinks = document.getElementById("nav-links");
+const menuBtnIcon = menuBtn.querySelector("i");
+
+menuBtn.addEventListener("click", () => {
+  navLinks.classList.toggle("open");
+
+  const isOpen = navLinks.classList.contains("open");
+  menuBtnIcon.setAttribute(
+    "class",
+    isOpen ? "ri-close-line" : "ri-menu-4-line"
+  );
+});
+
+navLinks.addEventListener("click", () => {
+  navLinks.classList.remove("open");
+  menuBtnIcon.setAttribute("class", "ri-menu-4-line");
+});
+
+const scrollRevealOption = {
+  distance: "50px",
+  origin: "bottom",
+  duration: 1000,
+};
+
+ScrollReveal().reveal(".header__container .section__header", {
+  ...scrollRevealOption,
+});
+
+const swiper = new Swiper(".swiper", {
+  loop: true,
+  effect: "coverflow",
+  grabCursor: true,
+  centeredSlides: true,
+  slidesPerView: "auto",
+  coverflowEffect: {
+    rotate: 0,
+    depth: 0,
+    modifier: 1,
+    scale: 0.9,
+    stretch: 0,
+  },
+});
+
+ScrollReveal().reveal(".service__container .section__subheader", {
+  ...scrollRevealOption,
+});
+ScrollReveal().reveal(".service__container .section__header", {
+  ...scrollRevealOption,
+  delay: 500,
+});
+
+ScrollReveal().reveal(".service__row:nth-child(2n-1) img", {
+  ...scrollRevealOption,
+  origin: "left",
+});
+ScrollReveal().reveal(".service__row:nth-child(2n) img", {
+  ...scrollRevealOption,
+  origin: "right",
+});
+ScrollReveal().reveal(".service__details h4", {
+  ...scrollRevealOption,
+  delay: 500,
+});
+ScrollReveal().reveal(".service__details p", {
+  ...scrollRevealOption,
+  delay: 1000,
+});
+ScrollReveal().reveal(".service__btn", {
+  ...scrollRevealOption,
+  delay: 1500,
+});
+
+const instagram = document.querySelector(".instagram__images");
+
+const instagramContent = Array.from(instagram.children);
+
+instagramContent.forEach((item) => {
+  const duplicateNode = item.cloneNode(true);
+  duplicateNode.setAttribute("aria-hidden", true);
+  instagram.appendChild(duplicateNode);
+});
+`;
+
 export const initialFiles: EditorFile[][] = [
   [
     {
@@ -919,5 +1759,41 @@ export const initialFiles: EditorFile[][] = [
       content: 'html',
       favorite: true,
     },
-  ],
+  ],,
+
+  [
+    {
+      id: '1',
+      name: 'index.html',
+      language: 'html',
+      content: contentHTML3,
+    },
+    {
+      id: '2',
+      name: 'styles.css',
+      language: 'css',
+      content: contentCSS3,
+    },
+    {
+      id: '3',
+      name: 'script.js',
+      language: 'javascript',
+      content: contentJS3,
+    },
+    {
+      id: '4',
+      name: 'images',
+      language: 'images',
+      content: '',
+      images: [],
+    },
+    {
+      id: '5',
+      name: 'Eightyeight · Alquiler de coches',
+      language: 'html',
+      content: 'html',
+      tags: ['coches', 'rental', 'landing', 'galeria'],
+      favorite: false,
+    },
+  ]
 ];
