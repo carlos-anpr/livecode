@@ -1,4 +1,19 @@
-# Zephyr — crea páginas web viendo el resultado al instante
+<div align="center">
+
+# **Zephyr**
+
+### *Crea páginas web viendo el resultado al instante*
+
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev)
+[![Tailwind](https://img.shields.io/badge/Tailwind-CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Monaco](https://img.shields.io/badge/Monaco-Editor-2F6FEB?style=flat-square)](https://microsoft.github.io/monaco-editor/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)]()
+
+</div>
+
+---
 
 **Zephyr es un editor de páginas web que te enseña el resultado mientras escribes.**
 Eliges un diseño ya hecho (o empiezas de cero), tocas el código y la página se
