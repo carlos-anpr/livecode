@@ -1,36 +1,8 @@
-# Créditos de contenido de terceros
+# Cr├®ditos de contenido de terceros  Este repositorio incluye dos dise├▒os de ejemplo con fines educativos y de demostraci├│n. **No son de mi autor├¡a** y conservan los avisos de copyright originales de sus autores.  ## Eightyeight ┬À Alquiler de coches  - **Autor:** WebDesignMastery - **Canal:** https://www.youtube.com/@WebDesignMastery - **C├│digo original:** https://github.com/WebDesignMastery/Eightyeight_15-09-25 - **Qu├® incluye aqu├¡:** estructura HTML, estilos CSS, JavaScript e im├ígenes,   adaptados como dise├▒o editable dentro de Zephyr   (`src/data/initialFiles.ts`, `public/designs/eightyeight/`).  ## Fitness Point ┬À Gimnasio  - **Autor:** WebDesignMastery - **Canal:** https://www.youtube.com/@WebDesignMastery - **C├│digo original:** https://github.com/WebDesignMastery/Fitness_Point_28-09-24 - **Qu├® incluye aqu├¡:** estructura HTML, estilos CSS, JavaScript e im├ígenes,   adaptados como dise├▒o editable dentro de Zephyr   (`src/data/initialFiles.ts`, `public/designs/fitness-point/`).  ## Fotograf├¡as  Las fotograf├¡as de estos dise├▒os provienen de bancos de im├ígenes gratuitos (estilo Unsplash/Pexels), cuyas licencias permiten el uso libre, incluso comercial. Los logotipos e iconos pertenecen a sus respectivos propietarios (Remix Icon, etc.).  ## C├│digo propio  Todo el c├│digo de la aplicaci├│n Zephyr (editor, vista previa, guardado, descargas) y los dise├▒os "Registro de pacientes" y "Tienda de moda" son de mi autor├¡a y se distribuyen bajo licencia MIT (ver `LICENSE`). 
+---
 
-Este repositorio incluye dos diseños de ejemplo con fines educativos y de
-demostración. **No son de mi autoría** y conservan los avisos de copyright
-originales de sus autores.
-
-## Eightyeight · Alquiler de coches
-
-- **Autor:** WebDesignMastery
-- **Canal:** https://www.youtube.com/@WebDesignMastery
-- **Código original:** https://github.com/WebDesignMastery/Eightyeight_15-09-25
-- **Qué incluye aquí:** estructura HTML, estilos CSS, JavaScript e imágenes,
-  adaptados como diseño editable dentro de Zephyr
-  (`src/data/initialFiles.ts`, `public/designs/eightyeight/`).
-
-## Fitness Point · Gimnasio
-
-- **Autor:** WebDesignMastery
-- **Canal:** https://www.youtube.com/@WebDesignMastery
-- **Código original:** https://github.com/WebDesignMastery/Fitness_Point_28-09-24
-- **Qué incluye aquí:** estructura HTML, estilos CSS, JavaScript e imágenes,
-  adaptados como diseño editable dentro de Zephyr
-  (`src/data/initialFiles.ts`, `public/designs/fitness-point/`).
-
-## Fotografías
-
-Las fotografías de estos diseños provienen de bancos de imágenes gratuitos
-(estilo Unsplash/Pexels), cuyas licencias permiten el uso libre, incluso
-comercial. Los logotipos e iconos pertenecen a sus respectivos propietarios
-(Remix Icon, etc.).
-
-## Código propio
-
-Todo el código de la aplicación Zephyr (editor, vista previa, guardado,
-descargas) y los diseños "Registro de pacientes" y "Tienda de moda" son de mi
-autoría y se distribuyen bajo licencia MIT (ver `LICENSE`).
+NOTE ON THIRD-PARTY CONTENT: this license covers the Zephyr application code.
+The sample designs "Eightyeight" and "Fitness Point" and their images belong
+to their respective authors (see CREDITS.md) and are NOT covered by this
+license; they are included for educational/demonstration purposes with their
+original copyright notices intact.
